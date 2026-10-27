@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kitchen Manager — V1.2</title>
+<style>
+:root{--bg:#f2f5f8;--panel:#fff;--ink:#18212f;--muted:#697586;--line:#e1e7ef;--accent:#f3a712;--accent-dark:#b87500;--nav:#121c29;--green:#19734a;--red:#b93838;--shadow:0 8px 24px #17212d0a}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+.app{display:grid;grid-template-columns:235px 1fr;min-height:100vh}.sidebar{background:linear-gradient(180deg,#121c29 0%,#1c2a3a 100%);color:white;padding:24px 16px;box-shadow:4px 0 24px #17212d0b}.brand{font-size:21px;font-weight:800;letter-spacing:-.5px;margin:0 8px 5px}.brand span{color:var(--accent)}.subbrand{font-size:12px;color:#aeb8c5;margin:0 8px 28px}.nav{display:grid;gap:6px}.nav button{border:0;background:transparent;color:#d4dbe4;text-align:left;padding:12px;border-radius:9px;font-size:14px;cursor:pointer}.nav button.active,.nav button:hover{background:#2a3746;color:#fff}.nav button.active{box-shadow:inset 3px 0 var(--accent)}.sidebar-note{font-size:12px;color:#aeb8c5;line-height:1.5;margin:30px 8px}
+main{padding:26px;max-width:1400px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:24px}.eyebrow{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:700}.top h1{font-size:29px;margin:5px 0 0;letter-spacing:-.8px}.demo{font-size:12px;background:#fff4d9;color:#805500;padding:8px 11px;border-radius:999px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}.stat-label{font-size:13px;color:var(--muted)}.stat-value{font-size:27px;font-weight:800;margin:9px 0 4px;letter-spacing:-.7px}.stat-foot{font-size:12px;color:var(--muted)}.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(270px,.85fr);gap:16px}.panel{margin-bottom:16px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.panel h2{font-size:16px;margin:0}.muted{color:var(--muted);font-size:13px}.btn{border:1px solid var(--line);background:white;padding:10px 13px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;color:var(--ink);transition:transform .12s ease,box-shadow .12s ease}.btn:hover{box-shadow:0 4px 12px #17212d12;transform:translateY(-1px)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#241a06}.btn:hover{filter:brightness(.97)}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;padding:10px 8px;border-bottom:1px solid var(--line)}td{padding:12px 8px;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:0}.pill{display:inline-block;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:700}.pill.low{background:#fff0ee;color:var(--red)}.pill.ok{background:#e7f6ed;color:var(--green)}.pill.warn{background:#fff4d9;color:#805500}.empty{padding:24px;text-align:center;color:var(--muted);font-size:13px}.quick-list{display:grid;gap:10px}.quick{display:flex;align-items:center;gap:10px;border:1px solid var(--line);padding:11px;border-radius:10px}.dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none}.quick strong{font-size:13px;display:block}.quick small{font-size:12px;color:var(--muted)}.page{display:none}.page.active{display:block}.role-note{font-size:12px;color:var(--muted);margin:0 0 15px}.photo-preview{max-width:100%;max-height:240px;border-radius:10px;border:1px solid var(--line);display:none;margin-top:10px}.history-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}.history-row:last-child{border-bottom:0}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px}.field label{font-size:12px;font-weight:700;color:var(--muted)}input,select,textarea{font:inherit;font-size:14px;padding:10px 11px;border:1px solid #d9dfe7;border-radius:8px;background:#fff;width:100%;color:var(--ink)}.form-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.notice{background:#fff8e8;border:1px solid #f3dfb1;color:#76510b;padding:12px;border-radius:10px;font-size:12px;line-height:1.5;margin-bottom:15px}.recipe-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ingredient-row{display:grid;grid-template-columns:minmax(150px,1.4fr) minmax(90px,.7fr) minmax(85px,.6fr) 38px;gap:8px;align-items:end;padding:10px 0;border-bottom:1px solid var(--line)}.ingredient-cost{font-size:13px;font-weight:800;padding:10px 0;text-align:right}.stock-hint{font-size:11px;color:var(--muted);margin-top:4px}@media(max-width:600px){.ingredient-row{grid-template-columns:minmax(0,1fr) minmax(90px,.6fr)}.ingredient-row .ingredient-cost{padding:0;text-align:left}.ingredient-row .field{min-width:0}}.recipe{border:1px solid var(--line);border-radius:11px;padding:14px}.recipe h3{font-size:14px;margin:0 0 6px}.recipe p{font-size:12px;color:var(--muted);margin:0 0 10px}.recipe .cost{font-size:20px;font-weight:800}.recipe .cost small{font-size:12px;color:var(--muted);font-weight:500}.checkrow{display:flex;gap:9px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}.checkrow input{width:auto;margin-top:3px}.footer{font-size:11px;color:var(--muted);padding:10px 2px 20px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{padding:15px}.brand{display:inline-block}.subbrand{display:inline-block;margin:0 0 0 8px}.nav{display:flex;overflow:auto;margin-top:15px}.nav button{white-space:nowrap}.sidebar-note{display:none}main{padding:17px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:1fr}}
+@media(max-width:520px){.top{align-items:flex-start;flex-direction:column}.top h1{font-size:24px}.stats{gap:9px}.card{padding:13px}.stat-value{font-size:23px}.form-grid,.recipe-grid{grid-template-columns:1fr}.panel{padding:14px}}
+
+.low-stock-list{display:grid;gap:9px}
+.low-stock-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid #f0d8a5;border-radius:12px;background:#fffaf0}
+.low-stock-item strong{display:block}
+.low-stock-item small{display:block;color:var(--muted);margin-top:4px}
+.low-stock-item.is-out{border-color:#efb4b4;background:#fff4f4}
+.low-stock-badge{font-size:11px;font-weight:800;white-space:nowrap;padding:5px 8px;border-radius:999px;background:#ffedc2;color:#805400}
+.is-out .low-stock-badge{background:#ffe0e0;color:#9c2424}
+.empty-state{padding:18px 12px;text-align:center;color:var(--muted);background:#f7faf8;border-radius:12px}
+
+.event-list{display:grid;gap:12px}
+.event-card{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff}
+.event-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.event-meta{color:var(--muted);font-size:13px;margin-top:5px}
+.event-detail{margin-top:12px;padding:10px 12px;border-radius:9px;background:#f6f8fb;white-space:pre-wrap;overflow-wrap:anywhere}
+.event-detail strong{display:block;margin-bottom:4px}
+.event-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.event-past{opacity:.7}
+
+.quote-card,.calendar-item{border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:10px;background:#fff}
+.quote-card h3,.calendar-item h3{margin:0 0 5px}
+.quote-status{font-size:12px;font-weight:800;border-radius:20px;padding:5px 9px;background:#edf2f7;display:inline-block}
+.quote-status.accepted{background:#e0f5e8;color:#17663c}
+.quote-status.rejected{background:#ffe4e4;color:#992a2a}
+.quote-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.calendar-item{display:flex;gap:14px;align-items:flex-start}
+.calendar-date{min-width:88px;text-align:center;padding:10px;border-radius:10px;background:#f2f5f9;font-weight:800}
+
+.quote-line-row{display:grid;grid-template-columns:minmax(130px,1.5fr) minmax(70px,.5fr) minmax(90px,.7fr) minmax(90px,.7fr) 38px;gap:7px;align-items:end;padding:10px 0;border-bottom:1px solid var(--line)}
+@media(max-width:650px){.quote-line-row{grid-template-columns:1fr 1fr}.quote-line-row .quote-line-description{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">KITCHEN <span>MANAGER</span></div>
+  <div class="subbrand">La cuisine, mieux organisée.</div>
+  <nav class="nav" aria-label="Navigation">
+    <button class="active" data-page="dashboard">◫ &nbsp; Tableau de bord</button>
+    <button data-page="stocks">▤ &nbsp; Stocks</button>
+    <button data-page="recipes">♨ &nbsp; Recettes & coûts</button>
+    <button data-page="prep">☑ &nbsp; Préparations</button>
+    <button data-page="events">📅 &nbsp; Événements & commandes</button>
+    <button data-page="quotes">🧾 &nbsp; Devis & factures client</button>
+    <button data-page="calendar">🗓️ &nbsp; Calendrier</button>
+    <button data-page="temperatures">♧ &nbsp; Températures</button>
+    <button data-page="losses" data-patron-only="true">↘ &nbsp; Pertes & historique</button>
+    <button data-page="photo">▧ &nbsp; Photo produit</button>
+    <button data-page="invoices">🧾 &nbsp; Factures & livraisons</button>
+    <button data-page="accounts" data-admin-only="true">♙ &nbsp; Comptes & rôles</button>
+    <button data-page="establishments" data-admin-only="true">▦ &nbsp; Établissements</button>
+  </nav>
+  <div class="sidebar-note">Prototype V1.6<br>Données locales de démonstration · espaces séparés par établissement.</div>
+</aside>
+<main>
+  <header class="top">
+    <div><div class="eyebrow">Espace cuisine · Démo — données locales séparées par établissement</div><h1 id="page-title">Tableau de bord</h1></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <label for="establishment-select" class="muted">Établissement :</label><select id="establishment-select" style="width:auto;min-width:165px" aria-label="Établissement actif"></select><label for="role-select" class="muted">Rôle démo :</label>
+      <select id="role-select" style="width:auto;min-width:155px"><option value="admin">Administrateur</option><option value="gestionnaire">Gestionnaire</option><option value="employe">Employé</option></select>
+      <span class="demo">MODE PROTOTYPE</span>
+    </div>
+  </header>
+
+  <section class="page active" id="dashboard">
+    <div class="notice"><strong>V1.6.2 :</strong> aide à la sélection et à la création des établissements. Le sélecteur de rôle reste une simulation : il ne remplace pas une vraie connexion sécurisée.</div>
+    <div class="notice"><strong>Pour choisir ton restaurant :</strong> va dans <button class="btn" type="button" onclick="showPage('establishments')">Mes établissements</button> pour le créer. Le menu en haut permet ensuite de passer d’un établissement à l’autre.</div>
+    <div class="role-note" id="role-description">Espace patron : accès aux coûts, recettes, pertes et réglages de gestion. Le sélecteur sert uniquement à tester les rôles dans cette démo.</div>
+    <div class="stats">
+      <div class="card"><div class="stat-label">Produits en stock</div><div class="stat-value" id="stat-products">—</div><div class="stat-foot">Références enregistrées</div></div>
+      <div class="card"><div class="stat-label">Alertes de stock</div><div class="stat-value" id="stat-alerts">—</div><div class="stat-foot">Sous le seuil minimum</div></div>
+      <div class="card"><div class="stat-label">Recettes</div><div class="stat-value" id="stat-recipes">—</div><div class="stat-foot">Fiches techniques</div></div>
+      <div class="card"><div class="stat-label">Valeur du stock</div><div class="stat-value" id="stat-value">—</div><div class="stat-foot">Estimation au prix d'achat</div></div>
+    </div>
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head"><h2>Stocks à surveiller</h2><button class="btn" onclick="showPage('stocks')">Voir les stocks →</button></div>
+        <div id="dashboard-stock"></div>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h2>Accès rapides</h2></div>
+          <div class="quick-list">
+            <div class="quick"><span class="dot"></span><div><strong>Ajouter un produit</strong><small>Mettre à jour les stocks</small></div><button class="btn" style="margin-left:auto" onclick="showPage('stocks')">Ouvrir</button></div>
+            <div class="quick"><span class="dot"></span><div><strong>Calculer une recette</strong><small>Coût et marge estimée</small></div><button class="btn" style="margin-left:auto" onclick="showPage('recipes')">Ouvrir</button></div>
+            <div class="quick"><span class="dot"></span><div><strong>Préparations du jour</strong><small>Suivre les tâches</small></div><button class="btn" style="margin-left:auto" onclick="showPage('prep')">Ouvrir</button></div>
+          </div>
+        </div>
+        <div class="notice">Les relevés de températures sont un simple journal de suivi. Ce prototype ne garantit pas la conformité HACCP et ne remplace pas votre plan de maîtrise sanitaire.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="stocks">
+    <div class="panel">
+      <div class="panel-head"><h2>Ajouter un produit</h2><span class="muted">Prix d'achat en €</span></div>
+      <form id="stock-form">
+        <div class="form-grid">
+          <div class="field"><label for="product-name">Nom du produit</label><input id="product-name" required placeholder="Ex. Pommes de terre"></div>
+          <div class="field"><label for="product-code">Code fournisseur / référence article</label><input id="product-code" placeholder="Ex. LEG-001 ou code du catalogue"></div>
+          <div class="field"><label for="product-category">Catégorie</label><select id="product-category"><option>Légumes</option><option>Viandes</option><option>Poissons</option><option>Produits laitiers</option><option>Épicerie</option><option>Surgelés</option><option>Autre</option></select></div>
+          <div class="field"><label for="product-qty">Quantité en stock</label><input id="product-qty" type="number" min="0" step="0.01" required placeholder="10"></div>
+          <div class="field"><label for="product-unit">Unité</label><select id="product-unit"><option>kg</option><option>g</option><option>L</option><option>cl</option><option>pièce(s)</option><option>paquet(s)</option></select></div>
+          <div class="field"><label for="product-price">Prix d'achat par unité (€)</label><input id="product-price" type="number" min="0" step="0.01" required placeholder="2.50"></div>
+          <div class="field"><label for="product-min">Seuil d'alerte</label><input id="product-min" type="number" min="0" step="0.01" required placeholder="3"></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">+ Ajouter au stock</button><button class="btn" type="reset">Effacer</button></div>
+      </form>
+    </div>
+    <div class="panel"><div class="panel-head"><h2>Inventaire</h2><button class="btn" onclick="exportCSV()">Exporter en CSV</button></div><div id="stock-table"></div></div>
+  </section>
+
+  <section class="page" id="recipes">
+    <div class="panel">
+      <div class="panel-head"><h2>Calculer le coût d'une recette</h2></div>
+      <form id="recipe-form">
+        <div class="form-grid">
+          <div class="field"><label for="recipe-name">Nom de la recette</label><input id="recipe-name" required placeholder="Ex. Burger maroilles"></div>
+          <div class="field"><label for="recipe-servings">Portions représentées par la recette</label><input id="recipe-servings" type="number" min="1" value="1" required></div>
+          <div class="field"><label for="recipe-price">Prix de vente par portion (€)</label><input id="recipe-price" type="number" min="0" step="0.01" required placeholder="Ex. 8.00"></div>
+        </div>
+        <div class="panel-head" style="margin-top:20px"><h2>Ingrédients de la recette</h2><button class="btn" type="button" onclick="addIngredientRow()">+ Ajouter un ingrédient</button></div>
+        <p class="muted">Choisis les produits déjà enregistrés dans tes stocks, puis indique la quantité utilisée pour le nombre de portions ci-dessus. Le coût se calcule automatiquement.</p>
+        <div id="recipe-ingredient-rows"></div>
+        <div class="card" style="margin-top:12px;background:#f8fafc">
+          <div class="stat-label">Coût total des ingrédients</div>
+          <div class="stat-value" id="recipe-live-total">0,00 €</div>
+          <div class="stat-foot" id="recipe-live-perportion">Coût par portion : 0,00 €</div>
+          <div class="stat-foot" id="recipe-live-margin" style="margin-top:5px">Différence vente - ingrédients : 0,00 € / portion</div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">Enregistrer la recette</button><button class="btn" type="button" onclick="resetIngredientRows()">Réinitialiser les ingrédients</button></div>
+      </form>
+    </div>
+    <div class="panel"><div class="panel-head"><h2>Mes fiches recettes</h2><span class="muted">Estimations indicatives</span></div><div id="recipe-list"></div></div>
+    <div class="notice">Les ingrédients sont choisis dans tes stocks : le coût est calculé à partir du prix d'achat et de la quantité utilisée. « Déduire du stock » retire les quantités nécessaires après confirmation. Utilise la même unité pour le stock et la recette (ex. kg avec kg). La marge affichée exclut personnel, énergie, pertes, charges et TVA.</div>
+  </section>
+
+  <section class="page" id="prep">
+    <div class="panel">
+      <div class="panel-head"><h2>Préparations du jour</h2><span class="muted" id="today"></span></div>
+      <form id="prep-form">
+        <div class="form-grid">
+          <div class="field"><label for="prep-task">Tâche à préparer</label><input id="prep-task" required placeholder="Ex. Éplucher les pommes de terre"></div>
+          <div class="field"><label for="prep-person">Responsable</label><input id="prep-person" placeholder="Ex. Camille"></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">+ Ajouter une tâche</button></div>
+      </form>
+      <div id="prep-list" style="margin-top:15px"></div>
+    </div>
+  </section>
+
+  <section class="page" id="events">
+    <div class="notice"><strong>Prévoir les commandes :</strong> note tes événements, le nombre de personnes et les produits à prévoir. Les quantités restent à vérifier avant de commander.</div>
+    <div class="panel">
+      <div class="panel-head"><h2>Ajouter un événement</h2><span class="muted">Repas, anniversaire, réception, match…</span></div>
+      <form id="event-form">
+        <div class="form-grid">
+          <div class="field"><label for="event-name">Nom de l’événement</label><input id="event-name" required placeholder="Ex. Anniversaire, repas d’entreprise"></div>
+          <div class="field"><label for="event-date">Date</label><input id="event-date" type="text" inputmode="numeric" autocomplete="off" placeholder="JJ/MM/AAAA" required><small class="muted">Saisis la date au format JJ/MM/AAAA, par exemple 25/12/2026.</small></div>
+          <div class="field"><label for="event-guests">Nombre de personnes</label><input id="event-guests" type="number" min="1" step="1" required placeholder="Ex. 80"></div>
+          <div class="field"><label for="event-rab">Marge de sécurité (rab)</label><select id="event-rab"><option value="0">0 % — sans rab</option><option value="5">5 % — petit rab</option><option value="10" selected>10 % — conseillé</option><option value="15">15 % — rab confortable</option><option value="20">20 % — gros rab</option></select></div>
+          <div class="field"><label for="event-type">Type d’événement</label><select id="event-type"><option>Repas</option><option>Anniversaire</option><option>Réception</option><option>Service spécial</option><option>Autre</option></select></div>
+          <div class="field full"><label for="event-menu">Menu / plats prévus</label><textarea id="event-menu" rows="2" placeholder="Ex. Américain saucisse, grande frite, sauce…"></textarea></div>
+          <div class="field full"><label for="event-order">Produits / besoins par personne</label><textarea id="event-order" rows="3" placeholder="Un produit par ligne : Pommes de terre : 0,25 kg/personne ; Saucisses : 1 pièce/personne"></textarea><small class="muted">Saisis la quantité nécessaire par personne. Le logiciel ajoute le rab choisi et déduit le stock disponible.</small></div>
+          <div class="field full"><label for="event-notes">Notes / fournisseur / heure de service</label><textarea id="event-notes" rows="2" placeholder="Ex. Livraison jeudi matin, service à 19 h"></textarea></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">+ Enregistrer l’événement</button></div>
+      </form>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <div class="panel-head"><h2>Événements à venir</h2><span class="muted">Triés par date</span></div>
+      <div id="events-list"></div>
+    </div>
+  </section>
+
+  <section class="page" id="quotes">
+    <div class="notice"><strong>Devis et factures client :</strong> crée un devis, enregistre-le, puis marque-le comme accepté. Un devis accepté crée automatiquement un événement dans le calendrier et prépare une estimation des stocks à prévoir. Prototype local : documents de gestion, à vérifier avant usage comptable officiel.</div>
+    <div class="panel">
+      <div class="panel-head"><h2>Créer un devis</h2><span class="muted">Tu peux le reprendre ou le modifier plus tard</span></div>
+      <form id="quote-form">
+        <div class="form-grid">
+          <div class="field"><label for="quote-client">Client / entreprise</label><input id="quote-client" required placeholder="Nom du client"></div>
+          <div class="field"><label for="quote-title">Objet du devis</label><input id="quote-title" required placeholder="Ex. Repas de 40 personnes"></div>
+          <div class="field"><label for="quote-date">Date de l’événement</label><input id="quote-date" type="text" inputmode="numeric" autocomplete="off" placeholder="JJ/MM/AAAA" required><small class="muted">Saisis la date au format JJ/MM/AAAA, par exemple 25/12/2026.</small></div>
+          <div class="field"><label for="quote-guests">Nombre de personnes</label><input id="quote-guests" type="number" min="1" value="1" required></div>
+          <div class="field"><label for="quote-validity">Devis valable jusqu’au</label><input id="quote-validity" type="text" inputmode="numeric" autocomplete="off" placeholder="JJ/MM/AAAA"></div>
+          <div class="field"><label for="quote-rab">Rab pour les stocks</label><select id="quote-rab"><option value="0">0 %</option><option value="5">5 %</option><option value="10" selected>10 %</option><option value="15">15 %</option><option value="20">20 %</option></select></div>
+          <div class="field full"><label>Produits / prestations du devis</label><div id="quote-line-builder"></div><div class="form-actions"><button class="btn" type="button" id="quote-add-line">+ Ajouter une ligne</button></div><small class="muted">Choisis un produit déjà enregistré ou une prestation libre. Le prix peut être modifié pour ce devis sans changer la fiche produit.</small></div>
+          <div class="field full"><label for="quote-notes">Notes / conditions</label><textarea id="quote-notes" rows="2" placeholder="Livraison, horaires, acompte, conditions…"></textarea></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">Enregistrer le devis</button><button class="btn" type="button" onclick="document.getElementById('quote-form').reset()">Vider le formulaire</button></div>
+      </form>
+    </div>
+    <div class="panel" style="margin-top:16px"><div class="panel-head"><h2>Devis enregistrés</h2></div><div id="quotes-list"></div></div>
+  </section>
+  <section class="page" id="calendar">
+    <div class="panel">
+      <div class="panel-head"><h2>Calendrier des événements</h2><span class="muted">Événements issus des devis acceptés et événements ajoutés manuellement</span></div>
+      <div class="form-grid"><div class="field"><label for="calendar-month">Mois à afficher</label><input id="calendar-month" type="month"></div></div>
+      <div id="calendar-list" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <section class="page" id="temperatures">
+    <div class="panel">
+      <div class="panel-head"><h2>Journal de températures</h2><span class="muted">À compléter avec votre procédure interne</span></div>
+      <form id="temp-form">
+        <div class="form-grid">
+          <div class="field"><label for="temp-equipment">Équipement / produit</label><input id="temp-equipment" required placeholder="Ex. Chambre froide positive"></div>
+          <div class="field"><label for="temp-value">Température (°C)</label><input id="temp-value" type="number" step="0.1" required placeholder="3.5"></div>
+          <div class="field"><label for="temp-person">Nom / initiales</label><input id="temp-person" required placeholder="Initiales"></div>
+          <div class="field"><label for="temp-note">Observation / action corrective</label><input id="temp-note" placeholder="Ex. Contrôle effectué"></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">Enregistrer le relevé</button></div>
+      </form>
+    </div>
+    <div class="panel"><div class="panel-head"><h2>Historique des relevés</h2><button class="btn" onclick="clearTemps()">Vider l'historique</button></div><div id="temp-table"></div></div>
+    <div class="notice">Les limites acceptables dépendent de l'équipement, du produit et de votre plan sanitaire. Le logiciel n'évalue pas automatiquement la conformité.</div>
+  </section>
+  <section class="page" id="photo">
+    <div class="panel">
+      <div class="panel-head"><h2>Ajouter un produit avec une photo</h2><span class="muted">Assistant de référencement</span></div>
+      <div class="notice"><strong>V0.7 — Outils gratuits :</strong> recherche par code-barres dans Open Food Facts et tentative de lecture du code-barres sur la photo. La base gratuite ne connaît pas tous les produits professionnels. Vérifie toujours les informations avant de les enregistrer.</div>
+      <div class="panel" style="margin-bottom:16px">
+        <div class="panel-head"><h2>Reconnaître un produit</h2><span class="muted">Sans abonnement IA</span></div>
+        <div class="form-grid">
+          <div class="field"><label for="barcode-input">Code-barres (EAN)</label><input id="barcode-input" inputmode="numeric" autocomplete="off" placeholder="Ex. 3017620422003"></div>
+          <div class="field" style="align-content:end"><button class="btn primary" type="button" id="lookup-barcode-btn">🔎 Rechercher gratuitement</button></div>
+        </div>
+        <div class="form-actions"><button class="btn" type="button" id="scan-photo-barcode-btn">📷 Lire le code-barres de la photo</button><button class="btn" type="button" id="read-photo-text-btn">📝 Lire le texte de la photo</button></div>
+        <p id="barcode-status" class="muted" aria-live="polite">Entre un code-barres ou prends une photo nette du code. Une connexion Internet est nécessaire pour consulter la base gratuite.</p>
+      </div>
+      <div class="field">
+        <label for="product-photo">Photo de la boîte, de l'étiquette ou du cadencier</label>
+        <p class="muted">Choisis l'action souhaitée. Le bouton galerie permet de sélectionner une image déjà enregistrée sur ton téléphone.</p>
+        <input id="product-photo-camera" type="file" accept="image/*" capture="environment" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;z-index:-1" aria-label="Prendre une photo du produit">
+        <input id="product-photo-gallery" type="file" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;z-index:-1" aria-label="Choisir une image dans la galerie">
+        <div class="form-actions" style="margin-top:0">
+          <button class="btn primary" type="button" id="take-photo-btn" style="padding:13px 16px;font-size:14px">📷 Prendre une photo</button>
+          <button class="btn" type="button" id="choose-gallery-btn" style="padding:13px 16px;font-size:14px">🖼️ Choisir dans la galerie</button>
+        </div>
+        <div id="photo-file-name" class="muted" style="margin-top:8px">Aucune photo sélectionnée.</div>
+        <img id="photo-preview" class="photo-preview" alt="Aperçu de la photo choisie">
+      </div>
+      <form id="photo-product-form" style="margin-top:16px">
+        <div class="form-grid">
+          <div class="field"><label for="photo-name">Nom du produit</label><input id="photo-name" required placeholder="À vérifier sur l'étiquette"></div>
+          <div class="field"><label for="photo-brand">Marque / fournisseur</label><input id="photo-brand" placeholder="Ex. marque ou fournisseur"></div>
+          <div class="field"><label for="photo-ref">Code fournisseur / référence article</label><input id="photo-ref" placeholder="Code demandé pour commander"></div>
+          <div class="field"><label for="photo-barcode">Code-barres (EAN, facultatif)</label><input id="photo-barcode" placeholder="Code-barres du produit"></div>
+          <div class="field"><label for="photo-format">Format du colis</label><input id="photo-format" placeholder="Ex. carton de 6 x 1 kg"></div>
+          <div class="field"><label for="photo-qty">Quantité reçue en stock</label><input id="photo-qty" type="number" min="0" step="0.01" value="1" required></div>
+          <div class="field"><label for="photo-unit">Unité de stock</label><select id="photo-unit"><option>pièce(s)</option><option>kg</option><option>g</option><option>L</option><option>cl</option><option>paquet(s)</option></select></div>
+          <div class="field"><label for="photo-price">Prix d'achat par unité (€)</label><input id="photo-price" type="number" min="0" step="0.01" value="0" required></div>
+          <div class="field"><label for="photo-min">Seuil d'alerte</label><input id="photo-min" type="number" min="0" step="0.01" value="1" required></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">Vérifier et enregistrer le produit</button></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="page" id="invoices">
+    <div class="notice"><strong>V1.0 — Codes fournisseurs et factures :</strong> importe une photo ou une image de facture. Le logiciel essaie de lire le texte et prépare une liste à vérifier. Rien n'est ajouté au stock avant que tu appuies sur « Valider la livraison ». La lecture peut faire des erreurs ; compare toujours avec la facture.</div>
+    <div class="panel">
+      <div class="panel-head"><h2>1. Photographier ou importer une facture</h2><span class="muted">Lecture de texte dans le navigateur</span></div>
+      <input id="invoice-file" type="file" accept="image/*,.pdf,application/pdf">
+      <p class="muted">Pour cette première version, la lecture automatique fonctionne surtout avec les images. Pour un PDF, prends une capture d’écran ou une photo de la facture.</p>
+      <div id="invoice-file-preview" class="muted" style="margin-top:8px">Aucun fichier sélectionné.</div>
+      <div class="form-grid" style="margin-top:12px">
+        <div class="field"><label for="invoice-supplier">Fournisseur (à vérifier)</label><input id="invoice-supplier" placeholder="Ex. grossiste alimentaire"></div>
+        <div class="field"><label for="invoice-number">Numéro de facture / bon de livraison</label><input id="invoice-number" placeholder="Facultatif"></div>
+      </div>
+      <div class="form-actions"><button class="btn primary" type="button" id="read-invoice-btn">📝 Lire la facture et préparer la livraison</button></div>
+      <p id="invoice-status" class="muted" aria-live="polite">Choisis une photo de facture pour commencer.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>2. Vérifier les produits avant validation</h2><span class="muted">Modifie les lignes si nécessaire</span></div>
+      <div class="form-grid">
+        <div class="field"><label for="invoice-default-unit">Unité par défaut</label><select id="invoice-default-unit"><option value="kg">kg</option><option value="pièce(s)">pièce(s)</option><option value="L">L</option><option value="paquet(s)">paquet(s)</option><option value="g">g</option></select></div>
+        <div class="field"><label for="invoice-default-price">Prix si non détecté (€ / unité)</label><input id="invoice-default-price" type="number" min="0" step="0.01" value="0"></div>
+      </div>
+      <div id="invoice-lines" style="margin-top:14px"><div class="empty">Aucune ligne préparée pour l’instant.</div></div>
+      <div class="form-actions"><button class="btn" type="button" id="invoice-add-line-btn">+ Ajouter une ligne manuellement</button><button class="btn primary" type="button" id="invoice-validate-btn" disabled>✓ Valider la livraison et mettre à jour le stock</button></div>
+      <p class="muted">Saisis le nombre de colis, puis le contenu d’un colis (ex. 10 kg) et le prix du colis. Kitchen Manager calcule la quantité totale et le prix par unité de stock.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Historique des livraisons</h2><span class="muted">Pour cet établissement</span></div>
+      <div id="invoice-history-list"><div class="empty">Aucune livraison validée.</div></div>
+    </div>
+  </section>
+  <section class="page" id="losses">
+    <div class="panel">
+      <div class="panel-head"><h2>Enregistrer une perte ou une correction</h2></div>
+      <form id="loss-form">
+        <div class="form-grid">
+          <div class="field"><label for="loss-product">Produit</label><select id="loss-product" required></select></div>
+          <div class="field"><label for="loss-qty">Quantité perdue</label><input id="loss-qty" type="number" min="0.001" step="0.001" required placeholder="Ex. 0,5"></div>
+          <div class="field"><label for="loss-reason">Motif</label><select id="loss-reason"><option>Produit abîmé</option><option>Date dépassée</option><option>Erreur de préparation</option><option>Écart d'inventaire</option><option>Autre</option></select></div>
+          <div class="field"><label for="loss-note">Commentaire</label><input id="loss-note" placeholder="Facultatif"></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">Enregistrer la perte</button></div>
+      </form>
+    </div>
+    <div class="panel"><div class="panel-head"><h2>Historique des mouvements</h2><span class="muted">Entrées, productions, pertes</span></div><div id="movement-list"></div></div>
+  </section>
+
+  <section class="page" id="establishments">
+    <div class="notice"><strong>V0.6 — Base multi-établissements :</strong> les données de stock, recettes, préparations, températures et pertes sont enregistrées séparément pour chaque établissement dans ce navigateur. Ce n'est pas encore une synchronisation en ligne ni une sécurité de compte réelle.</div>
+    <div class="panel">
+      <div class="panel-head"><h2>Créer un établissement</h2><span class="muted">Un compte pourra en gérer plusieurs</span></div>
+      <form id="establishment-form">
+        <div class="form-grid">
+          <div class="field"><label for="establishment-name">Nom de l'établissement</label><input id="establishment-name" required placeholder="Ex. Café La Renaissance"></div>
+          <div class="field"><label for="establishment-type">Type</label><select id="establishment-type"><option>Café / bar</option><option>Restaurant</option><option>Brasserie</option><option>Friterie</option><option>Autre</option></select></div>
+          <div class="field"><label for="establishment-city">Ville (facultatif)</label><input id="establishment-city" placeholder="Ex. Cambrai"></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">+ Créer l'établissement</button></div>
+        <p id="establishment-status" class="muted" aria-live="polite">Remplis le nom puis appuie sur « Créer l’établissement ».</p>
+      </form>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Mes établissements</h2><span class="muted">Sélectionne un établissement en haut de l'écran</span></div>
+      <div id="establishment-list"></div>
+    </div>
+  </section>
+  <section class="page" id="accounts">
+    <div class="notice"><strong>Prototype :</strong> cette page permet de tester l'organisation des rôles dans ce navigateur. Les comptes ne sont pas encore de vrais comptes sécurisés et aucun mot de passe n'est stocké. Avant une commercialisation, l'authentification devra être installée côté serveur.</div>
+    <div class="panel">
+      <div class="panel-head"><h2>Créer un compte utilisateur</h2><span class="muted">Gestion des accès</span></div>
+      <p class="muted">Un compte peut être affecté à plusieurs établissements. Choisis au moins un établissement dans la liste ci-dessous.</p>
+      <form id="account-form">
+        <div class="form-grid">
+          <div class="field"><label for="account-name">Nom et prénom</label><input id="account-name" required placeholder="Ex. Alex Martin"></div>
+          <div class="field"><label for="account-email">Adresse e-mail</label><input id="account-email" type="email" required placeholder="nom@restaurant.fr"></div>
+          <div class="field"><label for="account-role">Rôle</label><select id="account-role"><option value="employe">Employé</option><option value="gestionnaire">Gestionnaire</option><option value="admin">Administrateur</option></select></div>
+          <div class="field"><label for="account-site">Établissement / équipe</label><input id="account-site" placeholder="Ex. Cuisine principale"></div>
+          <div class="field"><label for="account-establishments">Établissements autorisés</label><select id="account-establishments" multiple size="3" style="min-height:86px"></select><small class="muted">Sur ordinateur : Ctrl/Cmd + clic pour en choisir plusieurs.</small></div>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">+ Ajouter le compte de démonstration</button></div>
+      </form>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Comptes enregistrés</h2><span class="muted">Données locales de démonstration</span></div>
+      <div id="account-list"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Règles d'accès prévues</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>Fonction</th><th>Administrateur</th><th>Gestionnaire</th><th>Employé</th></tr></thead><tbody>
+      <tr><td>Comptes et rôles</td><td>Tout gérer</td><td>Non</td><td>Non</td></tr>
+      <tr><td>Stocks et livraisons</td><td>Tout gérer</td><td>Gérer</td><td>Consulter / signaler</td></tr>
+      <tr><td>Recettes et coûts</td><td>Tout gérer</td><td>Gérer selon autorisation</td><td>Préparations uniquement</td></tr>
+      <tr><td>Pertes et historique</td><td>Tout consulter</td><td>Gérer</td><td>Déclarer une perte</td></tr>
+      <tr><td>Paramètres de l'établissement</td><td>Tout gérer</td><td>Limité</td><td>Non</td></tr>
+      </tbody></table></div>
+    </div>
+  </section>
+
+  <div class="footer">Kitchen Manager V1.1 · Démonstration locale · Données conservées dans ce navigateur uniquement. Exportez régulièrement vos données.</div>
+</main>
+</div>
+<script>
+const money=n=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(Number(n)||0);
+const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initialStocks=[
+ {id:1,name:'Pommes de terre',category:'Légumes',qty:12,unit:'kg',price:1.2,min:5},
+ {id:2,name:'Steaks hachés',category:'Viandes',qty:2,unit:'kg',price:10.5,min:3},
+ {id:3,name:'Maroilles',category:'Produits laitiers',qty:4,unit:'kg',price:8.9,min:1},
+ {id:4,name:'Huile de friture',category:'Épicerie',qty:6,unit:'L',price:3.4,min:2}
+];
+function load(key,fallback){try{const v=localStorage.getItem('km_'+key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+const defaultRecipes=[
+{id:1,name:'Burger maroilles',servings:1,total:2.65,price:8},
+{id:2,name:'Américain saucisse',servings:1,total:1.75,price:7}
+];
+let establishments=load('establishments',[{id:'site-main',name:'Cuisine principale',type:'Restaurant',city:'',createdAt:new Date().toISOString()}]);
+let activeEstablishmentId=load('active_establishment_id',establishments[0]?.id||'site-main');
+if(!establishments.length){establishments=[{id:'site-main',name:'Cuisine principale',type:'Restaurant',city:''}];activeEstablishmentId='site-main'}
+if(!establishments.some(e=>e.id===activeEstablishmentId))activeEstablishmentId=establishments[0].id;
+let establishmentData=load('establishment_data',{});
+if(!establishmentData[activeEstablishmentId]){
+  establishmentData[activeEstablishmentId]={
+    stocks:load('stocks',initialStocks),recipes:load('recipes',defaultRecipes),
+    preps:load('preps',[]),temps:load('temps',[]),movements:load('movements',[]),events:load('events',[]),quotes:load('quotes',[])
+  };
+}
+let accounts=load('accounts',[{id:1,name:'Compte de démonstration',email:'demo@kitchen.local',role:'admin',site:'Cuisine principale',establishmentIds:establishments.map(e=>e.id)}]);
+let currentRole='admin';
+function loadActiveData(){
+  const d=establishmentData[activeEstablishmentId]||{};
+  stocks=d.stocks||initialStocks.map(x=>({...x}));
+  recipes=d.recipes||defaultRecipes.map(x=>({...x}));
+  preps=d.preps||[];temps=d.temps||[];movements=d.movements||[];
+}
+let stocks,recipes,preps,temps,movements,events,quotes;
+function persistActiveData(){
+  establishmentData[activeEstablishmentId]={stocks,recipes,preps,temps,movements,events,quotes};
+  localStorage.setItem('km_establishment_data',JSON.stringify(establishmentData));
+}
+function save(){
+  persistActiveData();
+  localStorage.setItem('km_establishments',JSON.stringify(establishments));
+  localStorage.setItem('km_active_establishment_id',JSON.stringify(activeEstablishmentId));
+  localStorage.setItem('km_accounts',JSON.stringify(accounts));
+  render();
+}
+function activeEstablishment(){return establishments.find(e=>e.id===activeEstablishmentId)||establishments[0]}
+function renderEstablishments(){
+  const sel=document.getElementById('establishment-select');
+  if(sel){
+    sel.innerHTML=establishments.map(e=>`<option value="${safe(e.id)}" ${e.id===activeEstablishmentId?'selected':''}>${safe(e.name)}</option>`).join('');
+    sel.title=establishments.length<2?'Un seul établissement existe. Crée-en un autre dans « Mes établissements » pour pouvoir changer.':'Choisis l’établissement actif';
+    sel.setAttribute('aria-label',establishments.length<2?'Établissement actif — crée un autre établissement pour pouvoir changer':'Choisir l’établissement actif');
+  }
+  const accountSites=document.getElementById('account-establishments');
+  if(accountSites){
+    const previous=[...accountSites.selectedOptions].map(o=>o.value);
+    accountSites.innerHTML=establishments.map(e=>`<option value="${safe(e.id)}">${safe(e.name)}</option>`).join('');
+    [...accountSites.options].forEach(o=>o.selected=previous.includes(o.value));
+    if(!previous.length && activeEstablishmentId) accountSites.value=activeEstablishmentId;
+  }
+  const host=document.getElementById('establishment-list');
+  if(host)host.innerHTML=establishments.map(e=>`<div class="panel" style="margin:10px 0"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><strong>${safe(e.name)}</strong><div class="muted">${safe(e.type||'Établissement')}${e.city?' · '+safe(e.city):''}</div><div class="muted">ID local : ${safe(e.id)}</div></div><div><span class="pill ${e.id===activeEstablishmentId?'ok':''}">${e.id===activeEstablishmentId?'Actif':'Disponible'}</span> ${e.id!==activeEstablishmentId?`<button class="btn" onclick="switchEstablishment('${safe(e.id)}')">Ouvrir</button>`:''} ${establishments.length>1?`<button class="btn" onclick="deleteEstablishment('${safe(e.id)}')">Supprimer</button>`:''}</div></div></div>`).join('');
+}
+function switchEstablishment(id){
+  if(!establishments.some(e=>e.id===id))return;
+  persistActiveData();activeEstablishmentId=id;localStorage.setItem('km_active_establishment_id',JSON.stringify(id));loadActiveData();render();renderEstablishments();
+  document.getElementById('establishment-select').value=id;
+  showPage('dashboard');
+}
+document.getElementById('establishment-select')?.addEventListener('change',e=>switchEstablishment(e.target.value));
+document.getElementById('establishment-form')?.addEventListener('submit',e=>{
+  e.preventDefault();
+  const status=document.getElementById('establishment-status');
+  const name=document.getElementById('establishment-name').value.trim();
+  if(!name){if(status)status.textContent='Écris le nom de ton établissement.';return;}
+  try{
+    persistActiveData();
+    const site={id:'site-'+Date.now(),name,type:document.getElementById('establishment-type').value,city:document.getElementById('establishment-city').value.trim(),createdAt:new Date().toISOString()};
+    establishments.push(site);
+    establishmentData[site.id]={stocks:[],recipes:[],preps:[],temps:[],movements:[],events:[],quotes:[]};
+    activeEstablishmentId=site.id;
+    loadActiveData();
+    localStorage.setItem('km_establishments',JSON.stringify(establishments));
+    localStorage.setItem('km_active_establishment_id',JSON.stringify(activeEstablishmentId));
+    localStorage.setItem('km_establishment_data',JSON.stringify(establishmentData));
+    localStorage.setItem('km_accounts',JSON.stringify(accounts));
+    e.target.reset();
+    render();
+    renderEstablishments();
+    const selector=document.getElementById('establishment-select');if(selector)selector.value=activeEstablishmentId;
+    if(status)status.textContent='Établissement « '+name+' » créé et sélectionné.';
+    showPage('dashboard');
+  }catch(err){
+    console.error(err);
+    if(status)status.textContent='Impossible d’enregistrer. Vérifie que le navigateur autorise le stockage local, puis réessaie.';
+    alert('Kitchen Manager n’a pas pu enregistrer cet établissement. Essaie d’ouvrir le fichier dans Chrome ou Samsung Internet, puis réessaie.');
+  }
+});
+function deleteEstablishment(id){
+  const site=establishments.find(e=>e.id===id);if(!site||establishments.length<2)return;
+  if(!confirm('Supprimer « '+site.name+' » et ses données locales de démonstration ? Cette action est irréversible.'))return;
+  delete establishmentData[id];establishments=establishments.filter(e=>e.id!==id);
+  accounts=accounts.map(a=>({...a,establishmentIds:(a.establishmentIds||establishments.map(x=>x.id)).filter(x=>x!==id)}));
+  if(activeEstablishmentId===id)activeEstablishmentId=establishments[0].id;
+  loadActiveData();save();renderEstablishments();
+}
+function setDefaultDateFields(){
+  const today=new Date();
+  const localToday=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  const eventDate=document.getElementById('event-date');
+  const quoteDate=document.getElementById('quote-date');
+  if(eventDate&&!eventDate.value&&!document.getElementById('event-form')?.dataset.editId)eventDate.value=displayDateInput(localToday);
+  if(quoteDate&&!quoteDate.value)quoteDate.value=displayDateInput(localToday);
+}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));document.getElementById('page-title').textContent=({dashboard:'Tableau de bord',stocks:'Gestion des stocks',recipes:'Recettes & coûts',prep:'Préparations',temperatures:'Températures',losses:'Pertes & historique',photo:'Référencer un produit',invoices:'Factures & livraisons',accounts:'Comptes & rôles',establishments:'Mes établissements',events:'Événements & commandes',quotes:'Devis & factures client',calendar:'Calendrier'})[id]||'Kitchen Manager';setDefaultDateFields();}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+function stockHTML(list){if(!list.length)return '<div class="empty">Aucun produit enregistré.</div>';return `<div class="table-wrap"><table><thead><tr><th>Produit</th><th>Quantité</th><th>Prix/unité</th><th>Valeur</th><th>État</th><th></th></tr></thead><tbody>${list.map(p=>`<tr><td><strong>${safe(p.name)}</strong><br><span class="muted">${safe(p.category)}${p.code ? " · Code fournisseur : "+safe(p.code) : ""}</span></td><td>${p.qty} ${safe(p.unit)}</td><td>${money(p.price)}</td><td>${money(p.qty*p.price)}</td><td>${p.qty<=p.min?'<span class="pill low">À commander</span>':'<span class="pill ok">OK</span>'}</td><td><button class="btn" onclick="adjustStock(${p.id})">Modifier</button> <button class="btn" onclick="deleteStock(${p.id})">×</button></td></tr>`).join('')}</tbody></table></div>`}
+function parseEventNeeds(text, guests, rabPercent){
+  const lines=String(text||'').split(/\n|;/).map(x=>x.trim()).filter(Boolean);
+  return lines.map(line=>{
+    const m=line.match(/^(.+?)\s*[:=—-]\s*(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml|pièces?|pcs?|unités?|boîtes?|cartons?|sacs?)?\s*(?:\/\s*(?:personne|pers|client|convive))?$/i);
+    if(!m)return {raw:line,valid:false};
+    const name=m[1].trim(), per=Number(m[2].replace(',','.')), unit=(m[3]||'unités').toLowerCase();
+    const required=per*Number(guests||0)*(1+Number(rabPercent||0)/100);
+    const stock=stocks.find(p=>p.name.toLowerCase()===name.toLowerCase());
+    const available=stock?Number(stock.qty)||0:null;
+    return {name,per,unit,required,available,toOrder:available===null?null:Math.max(0,required-available),valid:true};
+  });
+}
+function normalizeDateInput(value){
+  const v=String(value||'').trim();
+  let m=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if(m)return `${m[3]}-${m[2]}-${m[1]}`;
+  m=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m)return v;
+  return '';
+}
+function displayDateInput(value){
+  const v=String(value||'');
+  const m=v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m?`${m[3]}/${m[2]}/${m[1]}`:v;
+}
+let quoteLineCounter=0;
+function addQuoteLine(productId='', description='', qty=1, price=0, stockName=''){
+  const box=document.getElementById('quote-line-builder');if(!box)return;
+  const id=++quoteLineCounter;
+  const options=(stocks||[]).map(p=>`<option value="${safe(p.id)}" ${String(p.id)===String(productId)?'selected':''}>${safe(p.name)}${p.code?' — '+safe(p.code):''}</option>`).join('');
+  const row=document.createElement('div');row.className='quote-line-row';row.dataset.lineId=String(id);
+  row.innerHTML=`<div class="field"><label>Produit / prestation</label><select class="quote-line-product"><option value="">Prestation libre…</option>${options}</select><input class="quote-line-description" placeholder="Description" value="${safe(description)}" style="margin-top:6px"></div><div class="field"><label>Quantité</label><input class="quote-line-qty" type="number" min="0" step="0.01" value="${safe(qty)}"></div><div class="field"><label>Prix unitaire HT (€)</label><input class="quote-line-price" type="number" min="0" step="0.01" value="${safe(price)}"></div><div class="field"><label>Stock lié (facultatif)</label><select class="quote-line-stock"><option value="">Aucun</option>${options}</select></div><button type="button" class="btn" aria-label="Supprimer la ligne">×</button>`;
+  const prod=row.querySelector('.quote-line-product'), desc=row.querySelector('.quote-line-description'), stockSel=row.querySelector('.quote-line-stock');
+  prod.addEventListener('change',()=>{const p=stocks.find(x=>String(x.id)===prod.value);if(p){desc.value=p.name;stockSel.value=String(p.id);const priceField=row.querySelector('.quote-line-price');if(!Number(priceField.value))priceField.value=Number(p.price||0).toFixed(2)}});
+  row.querySelector('button').addEventListener('click',()=>row.remove());
+  if(stockName){const p=stocks.find(x=>x.name.toLowerCase()===stockName.toLowerCase());if(p)stockSel.value=String(p.id)}
+  box.appendChild(row);
+}
+function collectQuoteLines(){
+  return [...document.querySelectorAll('#quote-line-builder .quote-line-row')].map(row=>{
+    const prod=row.querySelector('.quote-line-product').value;
+    const stockId=row.querySelector('.quote-line-stock').value;
+    const p=stocks.find(x=>String(x.id)===String(stockId));
+    const description=row.querySelector('.quote-line-description').value.trim()||(p?p.name:'Prestation');
+    const qty=Number(row.querySelector('.quote-line-qty').value)||0;
+    const unitPrice=Number(row.querySelector('.quote-line-price').value)||0;
+    return {description,qty,unitPrice,stockName:p?p.name:'',stockId:p?p.id:null,total:qty*unitPrice};
+  }).filter(x=>x.description);
+}
+function parseQuoteLines(raw){
+  return String(raw||'').split(/\n/).map(line=>line.trim()).filter(Boolean).map(line=>{
+    const parts=line.split(';').map(x=>x.trim());
+    const qty=Number((parts[1]||'').replace(',','.'));
+    const price=Number((parts[2]||'').replace(',','.'));
+    return {description:parts[0]||'Prestation',qty:Number.isFinite(qty)?qty:0,unitPrice:Number.isFinite(price)?price:0,stockName:parts[3]||'',total:(Number.isFinite(qty)?qty:0)*(Number.isFinite(price)?price:0)};
+  });
+}
+function quoteTotal(q){return (q.lines||[]).reduce((sum,l)=>sum+Number(l.total||0),0)}
+function renderQuotes(){
+  const el=document.getElementById('quotes-list');if(!el)return;
+  if(!quotes.length){el.innerHTML='<div class="empty-state">Aucun devis enregistré pour le moment.</div>';return;}
+  el.innerHTML=[...quotes].sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))).map(q=>`<div class="quote-card"><div class="event-top"><div><h3>${safe(q.title)}</h3><div class="event-meta">Client : ${safe(q.client)} · Événement : ${safe(q.date)} · ${safe(q.guests)} personne(s)</div></div><span class="quote-status ${q.status==='Accepté'?'accepted':q.status==='Refusé'?'rejected':''}">${safe(q.status)}</span></div><div class="event-detail"><strong>Total HT indicatif</strong>${money(quoteTotal(q))}</div>${q.notes?`<div class="event-detail">${safe(q.notes)}</div>`:''}<div class="quote-actions"><button class="btn" onclick="printQuote('${safe(q.id)}')">Imprimer / PDF</button>${q.status==='Brouillon'||q.status==='Envoyé'?`<button class="btn primary" onclick="acceptQuote('${safe(q.id)}')">✓ Marquer accepté</button><button class="btn" onclick="rejectQuote('${safe(q.id)}')">Refuser</button>`:''}<button class="btn" onclick="deleteQuote('${safe(q.id)}')">Supprimer</button></div></div>`).join('');
+}
+function acceptQuote(id){
+  const q=quotes.find(x=>x.id===id);if(!q||q.status==='Accepté')return;
+  if(!confirm('Confirmer que le client a accepté le devis ? Cela créera un événement et une estimation de stock.'))return;
+  q.status='Accepté';q.acceptedAt=new Date().toISOString();
+  if(!q.eventId){
+    const needs=[];
+    (q.lines||[]).forEach(l=>{if(l.stockName){const stock=stocks.find(p=>p.name.toLowerCase()===l.stockName.toLowerCase());if(stock)needs.push(`${stock.name} : ${Number(l.qty)*(1+Number(q.rab||0)/100)} ${stock.unit}`);}});
+    const ev={id:'event-'+Date.now(),name:q.title+' — '+q.client,date:q.date,guests:q.guests,type:'Événement client',rab:Number(q.rab||0),menu:(q.lines||[]).map(l=>l.description).join(', '),order:needs.join('\n'),notes:'Créé depuis le devis accepté '+q.number+'. '+(q.notes||''),quoteId:q.id};
+    events.push(ev);q.eventId=ev.id;
+  }
+  save();renderQuotes();renderEvents();renderCalendar();
+}
+function rejectQuote(id){const q=quotes.find(x=>x.id===id);if(!q)return;q.status='Refusé';save();renderQuotes();}
+function deleteQuote(id){const q=quotes.find(x=>x.id===id);if(!q||!confirm('Supprimer ce devis ?'))return;quotes=quotes.filter(x=>x.id!==id);save();renderQuotes();}
+function printQuote(id){
+  const q=quotes.find(x=>x.id===id);if(!q)return;
+  const rows=(q.lines||[]).map(l=>`<tr><td>${safe(l.description)}</td><td>${safe(l.qty)}</td><td>${money(l.unitPrice)}</td><td>${money(l.total)}</td></tr>`).join('');
+  const w=window.open('','_blank');if(!w){alert('Autorise les fenêtres pop-up pour imprimer le devis.');return;}
+  w.document.write(`<!doctype html><html lang="fr"><meta charset="utf-8"><title>${safe(q.number)}</title><style>body{font:14px Arial;margin:36px;color:#222}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{border-bottom:1px solid #ddd;padding:10px;text-align:left}.total{text-align:right;margin-top:20px;font-size:20px}</style><h1>DEVIS</h1><p><b>N° :</b> ${safe(q.number)}<br><b>Client :</b> ${safe(q.client)}<br><b>Objet :</b> ${safe(q.title)}<br><b>Date de l'événement :</b> ${safe(q.date)}<br><b>Valable jusqu'au :</b> ${safe(q.validity||'Non précisé')}</p><table><thead><tr><th>Description</th><th>Quantité</th><th>Prix unitaire HT</th><th>Total HT</th></tr></thead><tbody>${rows}</tbody></table><div class="total">Total HT : ${money(quoteTotal(q))}</div><p>${safe(q.notes||'')}</p><p>Document généré par Kitchen Manager — vérifier les mentions légales, la TVA et les conditions avant envoi.</p><script>window.onload=()=>window.print()<\/script></html>`);
+  w.document.close();
+}
+function renderCalendar(){
+  const el=document.getElementById('calendar-list');if(!el)return;
+  const month=document.getElementById('calendar-month')?.value||new Date().toISOString().slice(0,7);
+  const list=(events||[]).filter(e=>String(e.date||'').startsWith(month)).sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  if(!list.length){el.innerHTML='<div class="empty-state">Aucun événement pour ce mois.</div>';return;}
+  el.innerHTML=list.map(e=>`<div class="calendar-item"><div class="calendar-date">${safe(e.date)}</div><div><h3>${safe(e.name)}</h3><div class="event-meta">${safe(e.guests||'—')} personne(s) · ${safe(e.type||'Événement')}</div>${e.quoteId?'<span class="quote-status accepted">Issu d’un devis accepté</span>':''}${e.order?`<div class="event-detail"><strong>Stock à prévoir</strong>${safe(e.order)}</div>`:''}</div></div>`).join('');
+}
+document.getElementById('quote-form')?.addEventListener('submit',e=>{
+  e.preventDefault();
+  const quoteDate=normalizeDateInput(document.getElementById('quote-date').value);if(!quoteDate){alert('Entre une date valide au format JJ/MM/AAAA.');return;}const validityRaw=document.getElementById('quote-validity').value.trim();const validity=validityRaw?normalizeDateInput(validityRaw):'';if(validityRaw&&!validity){alert('La date de validité doit être au format JJ/MM/AAAA.');return;}const lines=collectQuoteLines();if(!lines.length){alert('Ajoute au moins une ligne au devis.');return;}
+  const q={id:'quote-'+Date.now(),number:'DEV-'+new Date().getFullYear()+'-'+String(quotes.length+1).padStart(4,'0'),client:document.getElementById('quote-client').value.trim(),title:document.getElementById('quote-title').value.trim(),date:quoteDate,guests:Number(document.getElementById('quote-guests').value),validity,rab:Number(document.getElementById('quote-rab').value||10),lines,notes:document.getElementById('quote-notes').value.trim(),status:'Brouillon',createdAt:new Date().toISOString()};
+  quotes.push(q);e.target.reset();document.getElementById('quote-rab').value='10';document.getElementById('quote-line-builder').innerHTML='';addQuoteLine();setDefaultDateFields();save();renderQuotes();alert('Devis enregistré. Tu peux l’imprimer ou le sauvegarder en PDF.');
+});
+document.getElementById('calendar-month')?.addEventListener('change',renderCalendar);
+document.getElementById('quote-add-line')?.addEventListener('click',()=>addQuoteLine());
+addQuoteLine();
+function renderEvents(){
+  const el=document.getElementById('events-list');if(!el)return;
+  const today=new Date().toISOString().slice(0,10);
+  const sorted=[...(events||[])].sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  if(!sorted.length){el.innerHTML='<div class="empty-state">Aucun événement enregistré. Ajoute ton premier événement ci-dessus.</div>';return;}
+  el.innerHTML=`<div class="event-list">${sorted.map(ev=>{
+    const past=ev.date<today;
+    const date=ev.date?new Date(ev.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long',year:'numeric'}):'Date non définie';
+    return `<article class="event-card ${past?'event-past':''}"><div class="event-top"><div><h3 style="margin:0">${safe(ev.name)}</h3><div class="event-meta">📅 ${safe(date)} · 👥 ${safe(ev.guests)} personne(s) · ${safe(ev.type||'Événement')}</div></div><span class="demo">${past?'Passé':'À venir'}</span></div>
+    ${ev.menu?`<div class="event-detail"><strong>Menu prévu</strong>${safe(ev.menu)}</div>`:''}
+    ${ev.order?`<div class="event-detail"><strong>Produits / commandes à prévoir</strong>${safe(ev.order)}</div>`:''}
+    ${ev.notes?`<div class="event-detail"><strong>Notes</strong>${safe(ev.notes)}</div>`:''}
+    ${ev.order?`<div class="event-detail"><strong>Stock à prévoir avec ${safe(ev.rab??10)} % de rab</strong>${parseEventNeeds(ev.order,ev.guests,ev.rab??10).map(n=>{if(!n.valid)return `• ${safe(n.raw)} — format à vérifier`;const fmt=v=>Number(v).toLocaleString('fr-FR',{maximumFractionDigits:2});return `• ${safe(n.name)} : ${fmt(n.required)} ${safe(n.unit)} à prévoir${n.available===null?' · stock non trouvé (à vérifier)':` · stock : ${fmt(n.available)} ${safe(n.unit)} · à commander : ${fmt(n.toOrder)} ${safe(n.unit)}`}`}).join('<br>')}</div>`:''}
+    <div class="event-actions"><button class="btn" onclick="editEvent('${safe(ev.id)}')">Modifier</button><button class="btn" onclick="deleteEvent('${safe(ev.id)}')">Supprimer</button></div></article>`;
+  }).join('')}</div>`;
+}
+function editEvent(id){
+  const ev=events.find(x=>x.id===id);if(!ev)return;
+  document.getElementById('event-name').value=ev.name||'';
+  document.getElementById('event-date').value=displayDateInput(ev.date||'');
+  document.getElementById('event-guests').value=ev.guests||'';
+  document.getElementById('event-type').value=ev.type||'Repas';
+  document.getElementById('event-rab').value=String(ev.rab??10);
+  document.getElementById('event-menu').value=ev.menu||'';
+  document.getElementById('event-order').value=ev.order||'';
+  document.getElementById('event-notes').value=ev.notes||'';
+  document.getElementById('event-form').dataset.editId=ev.id;
+  document.querySelector('#event-form button[type="submit"]').textContent='Enregistrer les modifications';
+  showPage('events');
+  document.getElementById('event-name').focus();
+}
+function deleteEvent(id){
+  const ev=events.find(x=>x.id===id);if(!ev)return;
+  if(!confirm('Supprimer cet événement ?'))return;
+  events=events.filter(x=>x.id!==id);save();
+}
+document.getElementById('event-form')?.addEventListener('submit',e=>{
+  e.preventDefault();
+  const form=e.currentTarget,editId=form.dataset.editId;
+  const normalizedEventDate=normalizeDateInput(document.getElementById('event-date').value);if(!normalizedEventDate){alert('Entre une date valide au format JJ/MM/AAAA, par exemple 25/12/2026.');return;}
+  const ev={id:editId||'event-'+Date.now(),name:document.getElementById('event-name').value.trim(),date:normalizedEventDate,guests:Number(document.getElementById('event-guests').value),type:document.getElementById('event-type').value,rab:Number(document.getElementById('event-rab').value||10),menu:document.getElementById('event-menu').value.trim(),order:document.getElementById('event-order').value.trim(),notes:document.getElementById('event-notes').value.trim()};
+  if(editId)events=events.map(x=>x.id===editId?ev:x);else events.push(ev);
+  delete form.dataset.editId;form.reset();document.getElementById('event-rab').value='10';document.querySelector('#event-form button[type="submit"]').textContent='+ Enregistrer l’événement';save();showPage('events');
+});
+function render(){
+  renderEvents();renderQuotes();renderCalendar();renderEstablishments();renderLossProductOptions();renderMovements();renderAccounts();document.getElementById('stat-products').textContent=stocks.length;document.getElementById('stat-alerts').textContent=stocks.filter(p=>p.qty<=p.min).length;document.getElementById('stat-recipes').textContent=recipes.length;document.getElementById('stat-value').textContent=money(stocks.reduce((s,p)=>s+p.qty*p.price,0));document.getElementById('stock-table').innerHTML=stockHTML(stocks);const lowStock=stocks.filter(p=>Number(p.qty)<=Number(p.min)).sort((a,b)=>Number(a.qty)-Number(b.qty));
+document.getElementById('dashboard-stock').innerHTML=lowStock.length?`<div class="low-stock-list">${lowStock.map(p=>{const out=Number(p.qty)<=0;return `<div class="low-stock-item ${out?'is-out':''}"><div><strong>${safe(p.name)}</strong><small>${out?'RUPTURE DE STOCK':`Stock bas : ${p.qty} ${safe(p.unit)} · Seuil : ${p.min} ${safe(p.unit)}`}</small></div><span class="low-stock-badge">${out?'À commander':'À surveiller'}</span></div>`}).join('')}</div>`:`<div class="empty-state">✅ Aucun stock sous son seuil pour le moment.</div>`;document.getElementById('recipe-list').innerHTML=recipes.length?`<div class="recipe-grid">${recipes.map(r=>{let cost=Number(r.total||0)/Math.max(1,Number(r.servings||1)),margin=Number(r.price||0)-cost;let details=(r.ingredients||[]).map(i=>{let p=stocks.find(s=>s.id===i.stockId);return p?`${safe(p.name)} : ${i.qty} ${safe(p.unit)}`:`Produit supprimé : ${i.qty}`}).join(' · ');return `<div class="recipe"><h3>${safe(r.name)}</h3><p>${r.servings} portion(s) · Prix de vente ${money(r.price)}/portion</p><div class="cost">${money(cost)} <small>coût ingrédients / portion</small></div><p style="margin-top:8px">Différence vente - ingrédients : <strong>${money(margin)}</strong></p>${details?`<p>${details}</p>`:''}<div class="form-actions"><button class="btn primary" onclick="produceRecipe(${r.id})">Déduire du stock</button><button class="btn" onclick="deleteRecipe(${r.id})">Supprimer</button></div></div>`}).join('')}</div>`:'<div class="empty">Ajoutez votre première recette.</div>';document.getElementById('prep-list').innerHTML=preps.length?preps.map(p=>`<label class="checkrow"><input type="checkbox" ${p.done?'checked':''} onchange="togglePrep(${p.id},this.checked)"><span style="${p.done?'text-decoration:line-through;color:#697586':''}"><strong>${safe(p.task)}</strong><br><span class="muted">${safe(p.person||'Sans responsable')}</span></span><button type="button" class="btn" style="margin-left:auto" onclick="deletePrep(${p.id})">×</button></label>`).join(''):'<div class="empty">Aucune tâche pour le moment.</div>';document.getElementById('temp-table').innerHTML=temps.length?`<div class="table-wrap"><table><thead><tr><th>Date / heure</th><th>Équipement</th><th>Temp.</th><th>Initiales</th><th>Observation</th></tr></thead><tbody>${temps.slice().reverse().map(t=>`<tr><td>${safe(t.date)}</td><td>${safe(t.equipment)}</td><td>${safe(t.value)} °C</td><td>${safe(t.person)}</td><td>${safe(t.note||'—')}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Aucun relevé enregistré.</div>'}
+document.getElementById('stock-form').addEventListener('submit',e=>{e.preventDefault();const code=document.getElementById('product-code').value.trim();if(code&&stocks.some(p=>String(p.code||'').toLowerCase()===code.toLowerCase())){alert('Ce code fournisseur existe déjà dans le stock. Modifie le produit existant plutôt que de créer un doublon.');return}const product={id:Date.now(),code,name:document.getElementById('product-name').value.trim(),category:document.getElementById('product-category').value,qty:Number(document.getElementById('product-qty').value),unit:document.getElementById('product-unit').value,price:Number(document.getElementById('product-price').value),min:Number(document.getElementById('product-min').value)};stocks.push(product);addMovement('Création produit',product.name,product.qty,product.unit,code?'Code fournisseur : '+code:'');e.target.reset();save()});
+function adjustStock(id){let p=stocks.find(x=>x.id===id);if(!p)return;let q=prompt('Nouvelle quantité pour '+p.name,p.qty);if(q===null)return;if(q.trim()===''||!Number.isFinite(Number(q))||Number(q)<0){alert('Entrez une quantité valide.');return}p.qty=Number(q);save()}
+function deleteStock(id){if(confirm('Supprimer ce produit du stock ?')){stocks=stocks.filter(x=>x.id!==id);save()}}
+let ingredientRowCounter=0;
+function addIngredientRow(stockId='',qty=''){
+  const host=document.getElementById('recipe-ingredient-rows');
+  const id=++ingredientRowCounter;
+  const row=document.createElement('div');row.className='ingredient-row';row.dataset.rowId=id;
+  const options=stocks.map(p=>`<option value="${p.id}" ${String(p.id)===String(stockId)?'selected':''}>${safe(p.name)} — ${p.qty} ${safe(p.unit)} en stock</option>`).join('');
+  row.innerHTML=`<div class="field"><label>Produit en stock</label><select class="ingredient-stock" required><option value="">Choisir un produit…</option>${options}</select><div class="stock-hint"></div></div><div class="field"><label>Quantité utilisée</label><input class="ingredient-qty" type="number" min="0.001" step="0.001" required value="${qty}" placeholder="Ex. 0,15"></div><div class="ingredient-cost">0,00 €</div><button class="btn" type="button" title="Supprimer cet ingrédient" aria-label="Supprimer cet ingrédient">×</button>`;
+  row.querySelector('.ingredient-stock').addEventListener('change',updateRecipeEstimate);
+  row.querySelector('.ingredient-qty').addEventListener('input',updateRecipeEstimate);
+  row.querySelector('button').addEventListener('click',()=>{row.remove();updateRecipeEstimate()});
+  host.appendChild(row);updateRecipeEstimate();
+}
+function resetIngredientRows(){document.getElementById('recipe-ingredient-rows').innerHTML='';addIngredientRow();updateRecipeEstimate()}
+function getIngredientLines(){
+  return [...document.querySelectorAll('#recipe-ingredient-rows .ingredient-row')].map(row=>({stockId:Number(row.querySelector('.ingredient-stock').value),qty:Number(row.querySelector('.ingredient-qty').value)})).filter(i=>i.stockId&&Number.isFinite(i.qty)&&i.qty>0);
+}
+function updateRecipeEstimate(){
+  let total=0;
+  document.querySelectorAll('#recipe-ingredient-rows .ingredient-row').forEach(row=>{
+    const sid=Number(row.querySelector('.ingredient-stock').value),qty=Number(row.querySelector('.ingredient-qty').value)||0;
+    const p=stocks.find(s=>s.id===sid);
+    const cost=p?qty*Number(p.price):0;total+=cost;
+    row.querySelector('.ingredient-cost').textContent=money(cost);
+    row.querySelector('.stock-hint').textContent=p?`Unité : ${p.unit} · Disponible : ${p.qty} ${p.unit} · Prix : ${money(p.price)}/${p.unit}`:'Choisis un produit enregistré dans les stocks.';
+  });
+  const servings=Math.max(1,Number(document.getElementById('recipe-servings').value)||1);
+  const price=Number(document.getElementById('recipe-price').value)||0;
+  document.getElementById('recipe-live-total').textContent=money(total);
+  document.getElementById('recipe-live-perportion').textContent=`Coût par portion : ${money(total/servings)}`;
+  document.getElementById('recipe-live-margin').textContent=`Différence vente - ingrédients : ${money(price-total/servings)} / portion`;
+}
+document.getElementById('recipe-servings').addEventListener('input',updateRecipeEstimate);
+document.getElementById('recipe-price').addEventListener('input',updateRecipeEstimate);
+document.getElementById('recipe-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const lines=getIngredientLines();
+  if(!lines.length){alert('Ajoute au moins un ingrédient en le choisissant dans tes stocks.');return}
+  const missing=lines.find(i=>!stocks.some(s=>s.id===i.stockId));
+  if(missing){alert('Un ingrédient ne correspond plus à un produit en stock.');return}
+  const servings=Number(document.getElementById('recipe-servings').value);
+  const total=lines.reduce((sum,i)=>{const p=stocks.find(s=>s.id===i.stockId);return sum+(p?i.qty*Number(p.price):0)},0);
+  recipes.push({id:Date.now(),name:document.getElementById('recipe-name').value.trim(),servings,total,price:Number(document.getElementById('recipe-price').value),ingredients:lines});
+  e.target.reset();document.getElementById('recipe-servings').value=1;document.getElementById('recipe-ingredient-rows').innerHTML='';addIngredientRow();save();
+});
+function produceRecipe(id){
+  const r=recipes.find(x=>x.id===id);if(!r||!r.ingredients||!r.ingredients.length){alert('Cette ancienne recette ne contient pas encore de détails ingrédients. Supprime-la et recrée-la pour utiliser cette fonction.');return}
+  const portions=Number(prompt(`Combien de portions de « ${r.name} » veux-tu produire ?`,String(r.servings||1)));
+  if(!Number.isInteger(portions)||portions<=0){alert('Entre un nombre entier de portions supérieur à zéro.');return}
+  const factor=portions/Math.max(1,Number(r.servings||1));
+  const needs=r.ingredients.map(i=>({ingredient:i,product:stocks.find(s=>s.id===i.stockId),qty:Number(i.qty)*factor}));
+  const missing=needs.find(n=>!n.product||n.product.qty<n.qty);
+  if(missing){alert(`Stock insuffisant pour ${missing.product?missing.product.name:'un ingrédient'}. Disponible : ${missing.product?missing.product.qty+' '+missing.product.unit:'produit absent'}. Aucune quantité n'a été déduite.`);return}
+  if(!confirm(`Déduire les ingrédients de ${portions} portion(s) de « ${r.name} » du stock ?`))return;
+  needs.forEach(n=>{n.product.qty=Math.round((n.product.qty-n.qty)*1000)/1000;addMovement('Production',n.product.name,-n.qty,n.product.unit,`${portions} portion(s) de ${r.name}`)});
+  save();alert('Stock mis à jour. Pense à vérifier les quantités après la production.');
+}
+function deleteRecipe(id){if(confirm('Supprimer cette recette ?')){recipes=recipes.filter(x=>x.id!==id);save()}}
+document.getElementById('prep-form').addEventListener('submit',e=>{e.preventDefault();preps.push({id:Date.now(),task:document.getElementById('prep-task').value.trim(),person:document.getElementById('prep-person').value.trim(),done:false});e.target.reset();save()});
+function togglePrep(id,done){let p=preps.find(x=>x.id===id);if(p){p.done=done;save()}}
+function deletePrep(id){preps=preps.filter(x=>x.id!==id);save()}
+document.getElementById('temp-form').addEventListener('submit',e=>{e.preventDefault();temps.push({id:Date.now(),date:new Date().toLocaleString('fr-FR'),equipment:document.getElementById('temp-equipment').value.trim(),value:document.getElementById('temp-value').value,person:document.getElementById('temp-person').value.trim(),note:document.getElementById('temp-note').value.trim()});e.target.reset();save()});
+function clearTemps(){if(confirm('Effacer tout l’historique des températures ?')){temps=[];save()}}
+function exportCSV(){let rows=[['Produit','Code fournisseur','Catégorie','Quantité','Unité','Prix unité EUR','Seuil'],...stocks.map(p=>[p.name,p.code||'',p.category,p.qty,p.unit,p.price,p.min])];let csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');let blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kitchen-manager-stocks.csv';a.click();URL.revokeObjectURL(a.href)}
+document.getElementById('today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+
+function addMovement(type,product,qty,unit,detail=''){
+  movements.push({id:Date.now()+Math.random(),date:new Date().toLocaleString('fr-FR'),type,product,qty,unit,detail});
+}
+function renderLossProductOptions(){
+  const sel=document.getElementById('loss-product');if(!sel)return;
+  const old=sel.value;
+  sel.innerHTML=stocks.map(p=>`<option value="${p.id}">${safe(p.name)} — ${p.qty} ${safe(p.unit)}</option>`).join('');
+  if(old&&stocks.some(p=>String(p.id)===old))sel.value=old;
+}
+function renderMovements(){
+  const host=document.getElementById('movement-list');if(!host)return;
+  host.innerHTML=movements.length?movements.slice().reverse().map(m=>`<div class="history-row"><div><strong>${safe(m.type)} · ${safe(m.product)}</strong><br><span class="muted">${safe(m.date)}${m.detail?' · '+safe(m.detail):''}</span></div><strong>${m.qty>0?'+':''}${m.qty} ${safe(m.unit)}</strong></div>`).join(''):'<div class="empty">Aucun mouvement enregistré pour le moment.</div>';
+}
+function setRole(role){
+  currentRole=role;
+  const employee=role==='employe', manager=role==='gestionnaire', admin=role==='admin';
+  const descriptions={
+    admin:'Espace administrateur : gestion globale, comptes, rôles, stocks, recettes, coûts et paramètres.',
+    gestionnaire:'Espace gestionnaire : stocks, livraisons, recettes, pertes et suivi de l’activité. La gestion des comptes est réservée à l’administrateur.',
+    employe:'Espace employé : consultation des stocks, préparations, relevés et référencement des produits. Les coûts et les réglages sensibles sont limités.'
+  };
+  document.getElementById('role-description').textContent=descriptions[role]||descriptions.employe;
+  document.querySelectorAll('[data-admin-only="true"]').forEach(b=>b.style.display=admin?'':'none');
+  document.querySelectorAll('[data-patron-only="true"]').forEach(b=>b.style.display=employee?'none':'');
+  document.querySelector('[data-page="recipes"]').style.display=employee?'none':'';
+  document.querySelector('[data-page="losses"]').style.display=employee?'none':'';
+  if((!admin && document.querySelector('.page.active')?.id==='accounts')||(employee && ['recipes','losses'].includes(document.querySelector('.page.active')?.id)))showPage('dashboard');
+}
+document.getElementById('role-select').addEventListener('change',e=>setRole(e.target.value));
+document.getElementById('take-photo-btn').addEventListener('click',()=>document.getElementById('product-photo-camera').click());
+document.getElementById('choose-gallery-btn').addEventListener('click',()=>document.getElementById('product-photo-gallery').click());
+function handleChosenPhoto(e){
+  const file=e.target.files&&e.target.files[0];const img=document.getElementById('photo-preview');
+  if(!file)return;
+  if(!file.type.startsWith('image/')){alert('Choisis un fichier image.');e.target.value='';return}
+  document.getElementById('photo-file-name').textContent='Photo sélectionnée : '+file.name+' — tu peux essayer de lire le code-barres ci-dessus.';
+  const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display='block'};reader.readAsDataURL(file);
+}
+document.getElementById('product-photo-camera').addEventListener('change',handleChosenPhoto);
+document.getElementById('product-photo-gallery').addEventListener('change',handleChosenPhoto);
+document.getElementById('photo-product-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=document.getElementById('photo-name').value.trim();
+  const ref=document.getElementById('photo-ref').value.trim();
+  const existing=stocks.find(p=>p.name.toLowerCase()===name.toLowerCase()||(ref&&p.ref&&p.ref===ref));
+  if(existing){
+    if(!confirm(`Le produit « ${existing.name} » existe déjà. Ajouter la quantité reçue à son stock ?`))return;
+    existing.qty=Number(existing.qty)+Number(document.getElementById('photo-qty').value);
+    addMovement('Entrée (photo vérifiée)',existing.name,Number(document.getElementById('photo-qty').value),existing.unit,ref||'');
+    save();alert('Quantité ajoutée au produit existant.');return;
+  }
+  const product={id:Date.now(),name,category:'Autre',qty:Number(document.getElementById('photo-qty').value),unit:document.getElementById('photo-unit').value,price:Number(document.getElementById('photo-price').value),min:Number(document.getElementById('photo-min').value),ref,brand:document.getElementById('photo-brand').value.trim(),format:document.getElementById('photo-format').value.trim()};
+  stocks.push(product);addMovement('Création produit',name,product.qty,product.unit,ref||'Référencé manuellement après photo');
+  e.target.reset();document.getElementById('product-photo-camera').value='';document.getElementById('product-photo-gallery').value='';document.getElementById('photo-preview').style.display='none';document.getElementById('photo-file-name').textContent='Aucune photo sélectionnée.';save();alert('Produit enregistré. Vérifie le nom et les informations extraites de l’étiquette.');
+});
+document.getElementById('loss-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const p=stocks.find(s=>s.id===Number(document.getElementById('loss-product').value));
+  const qty=Number(document.getElementById('loss-qty').value);
+  if(!p){alert('Choisis un produit.');return}
+  if(qty<=0||qty>p.qty){alert(`Quantité invalide. Stock disponible : ${p.qty} ${p.unit}.`);return}
+  if(!confirm(`Enregistrer une perte de ${qty} ${p.unit} pour ${p.name} ? Coût estimé : ${money(qty*p.price)}.`))return;
+  p.qty=Math.round((p.qty-qty)*1000)/1000;
+  addMovement('Perte',p.name,-qty,p.unit,document.getElementById('loss-reason').value+(document.getElementById('loss-note').value?' — '+document.getElementById('loss-note').value:''));
+  e.target.reset();save();
+});
+
+
+function renderAccounts(){
+  const host=document.getElementById('account-list');if(!host)return;
+  const roleNames={admin:'Administrateur',gestionnaire:'Gestionnaire',employe:'Employé'};
+  host.innerHTML=accounts.length?`<div class="table-wrap"><table><thead><tr><th>Nom / e-mail</th><th>Rôle de démonstration</th><th>Établissements autorisés</th><th>Actions</th></tr></thead><tbody>${accounts.map(a=>`
+    <tr>
+      <td><strong>${safe(a.name)}</strong><br><span class="muted">${safe(a.email)}</span></td>
+      <td><select id="account-role-${a.id}" style="min-width:135px"><option value="admin" ${a.role==='admin'?'selected':''}>Administrateur</option><option value="gestionnaire" ${a.role==='gestionnaire'?'selected':''}>Gestionnaire</option><option value="employe" ${a.role==='employe'?'selected':''}>Employé</option></select></td>
+      <td><select id="account-sites-${a.id}" multiple size="3" style="min-width:170px;min-height:76px">${establishments.map(e=>`<option value="${safe(e.id)}" ${(a.establishmentIds||establishments.filter(x=>x.name===a.site).map(x=>x.id)).includes(e.id)?'selected':''}>${safe(e.name)}</option>`).join('')}</select></td>
+      <td><button class="btn primary" onclick="saveAccountSettings(${a.id})">Enregistrer</button> ${a.id===1?'<span class="muted">Compte démo</span>':`<button class="btn" onclick="deleteAccount(${a.id})">Supprimer</button>`}</td>
+    </tr>`).join('')}</tbody></table></div>`:'<div class="empty">Aucun compte.</div>';
+}
+function saveAccountSettings(id){
+  const account=accounts.find(a=>a.id===id);if(!account)return;
+  const role=document.getElementById('account-role-'+id).value;
+  const siteSelect=document.getElementById('account-sites-'+id);
+  const ids=[...siteSelect.selectedOptions].map(o=>o.value);
+  if(!ids.length){alert('Choisis au moins un établissement pour ce compte.');return}
+  account.role=role;account.establishmentIds=ids;
+  account.site=ids.map(x=>establishments.find(e=>e.id===x)?.name).filter(Boolean).join(', ');
+  save();alert('Paramètres de démonstration enregistrés.');
+}
+document.getElementById('account-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const email=document.getElementById('account-email').value.trim().toLowerCase();
+  if(accounts.some(a=>a.email.toLowerCase()===email)){alert('Cette adresse e-mail existe déjà.');return}
+  const chosenSites=[...document.getElementById('account-establishments').selectedOptions].map(o=>o.value);
+  const establishmentIds=chosenSites.length?chosenSites:[activeEstablishmentId];
+  accounts.push({id:Date.now(),name:document.getElementById('account-name').value.trim(),email,role:document.getElementById('account-role').value,site:document.getElementById('account-site').value.trim()||establishmentIds.map(id=>establishments.find(x=>x.id===id)?.name).filter(Boolean).join(', '),establishmentIds});
+  e.target.reset();renderEstablishments();save();alert('Compte de démonstration ajouté. Aucun e-mail d’invitation ni mot de passe n’est créé dans cette version.');
+});
+function deleteAccount(id){if(confirm('Supprimer ce compte de démonstration ?')){accounts=accounts.filter(a=>a.id!==id);save()}}
+
+loadActiveData();
+
+// V0.7 : recherche de produits dans Open Food Facts (service communautaire gratuit).
+const barcodeInput=document.getElementById('barcode-input');
+const barcodeStatus=document.getElementById('barcode-status');
+function setBarcodeStatus(message){if(barcodeStatus)barcodeStatus.textContent=message}
+function applyOpenFoodFactsProduct(p,barcode){
+  const product=p.product||{};
+  const name=product.product_name||product.product_name_en||product.generic_name||'';
+  const brand=product.brands||'';
+  const quantity=product.quantity||'';
+  const categories=(product.categories_tags||[]).map(x=>x.split(':').pop().replace(/-/g,' ')).filter(Boolean).slice(0,3).join(', ');
+  document.getElementById('photo-barcode').value=barcode;
+  if(name)document.getElementById('photo-name').value=name;
+  if(brand)document.getElementById('photo-brand').value=brand;
+  if(quantity)document.getElementById('photo-format').value=quantity;
+  setBarcodeStatus(name?'Produit trouvé. Vérifie les informations et complète le prix et la quantité reçue.':'Code trouvé, mais le nom du produit est absent de la fiche. Complète les champs manuellement.');
+}
+async function lookupBarcode(){
+  const code=(barcodeInput.value||'').replace(/\D/g,'');
+  if(!code){setBarcodeStatus('Entre d’abord le code-barres.');barcodeInput.focus();return}
+  document.getElementById('photo-barcode').value=code;
+  setBarcodeStatus('Recherche dans Open Food Facts…');
+  try{
+    const response=await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json');
+    if(!response.ok)throw new Error('service indisponible');
+    const data=await response.json();
+    if(data.status===1&&data.product){applyOpenFoodFactsProduct(data,code)}
+    else setBarcodeStatus('Produit non trouvé dans la base gratuite. Tu peux compléter la fiche manuellement.');
+  }catch(err){setBarcodeStatus('Recherche impossible : vérifie ta connexion Internet puis réessaie, ou complète la fiche manuellement.')}
+}
+document.getElementById('lookup-barcode-btn')?.addEventListener('click',lookupBarcode);
+barcodeInput?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();lookupBarcode()}});
+document.getElementById('scan-photo-barcode-btn')?.addEventListener('click',async()=>{
+  const file=document.getElementById('product-photo-camera').files[0]||document.getElementById('product-photo-gallery').files[0];
+  if(!file){setBarcodeStatus('Prends une photo ou choisis une image contenant le code-barres, puis réessaie.');return}
+  if(!('BarcodeDetector' in window)||!('createImageBitmap' in window)){
+    setBarcodeStatus('La lecture automatique sur photo n’est pas prise en charge par ce navigateur. Entre le code-barres manuellement.');
+    return;
+  }
+  try{
+    setBarcodeStatus('Lecture du code-barres sur la photo…');
+    const detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']});
+    const bitmap=await createImageBitmap(file);
+    const codes=await detector.detect(bitmap);
+    bitmap.close?.();
+    if(codes.length){
+      barcodeInput.value=codes[0].rawValue;
+      document.getElementById('photo-barcode').value=codes[0].rawValue;
+      setBarcodeStatus('Code-barres lu : '+codes[0].rawValue+'. Recherche des informations…');
+      await lookupBarcode();
+    }else setBarcodeStatus('Aucun code-barres détecté. Essaie une photo plus nette, bien éclairée, ou entre le code manuellement.');
+  }catch(err){setBarcodeStatus('Lecture non disponible pour cette image. Entre le code-barres manuellement.')}
+});
+
+
+// V0.7.1 : OCR gratuit dans le navigateur via Tesseract.js (chargé à la demande).
+document.getElementById('read-photo-text-btn')?.addEventListener('click',async()=>{
+  const file=document.getElementById('product-photo-camera').files[0]||document.getElementById('product-photo-gallery').files[0];
+  if(!file){setBarcodeStatus('Prends une photo ou choisis une image de l’étiquette avant de lire le texte.');return}
+  const btn=document.getElementById('read-photo-text-btn');
+  btn.disabled=true;btn.textContent='Lecture en cours…';
+  setBarcodeStatus('Chargement de l’outil gratuit de lecture du texte. La première utilisation peut prendre un moment…');
+  try{
+    if(!window.Tesseract){
+      await new Promise((resolve,reject)=>{
+        const script=document.createElement('script');
+        script.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+        script.onload=resolve;script.onerror=()=>reject(new Error('Chargement impossible'));
+        document.head.appendChild(script);
+      });
+    }
+    setBarcodeStatus('Lecture du texte de l’étiquette…');
+    const result=await window.Tesseract.recognize(file,'fra+eng');
+    const text=result.data.text||'';
+    if(!text.trim()){setBarcodeStatus('Aucun texte lisible détecté. Essaie une photo plus nette ou saisis le nom manuellement.');return}
+    const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+    // Ne remplit le nom que si le champ est vide ou encore sur son texte indicatif.
+    const nameField=document.getElementById('photo-name');
+    const candidate=lines.find(x=>/fricand|fricadel|sauciss|steak|poulet|fromage|frites|pommes de terre|viande/i.test(x))||lines.find(x=>x.length>=4&&!/ingr[eé]dients|conserver|lot|code|allerg|temp[eé]rature/i.test(x));
+    if(candidate && (!nameField.value.trim()||nameField.value.trim()==="À vérifier sur l'étiquette"))nameField.value=candidate.replace(/[^A-Za-zÀ-ÿ0-9 /'’().,-]/g,'').trim().slice(0,100);
+    const barcode=(text.match(/\b\d{8,14}\b/)||[])[0];
+    if(barcode){document.getElementById('barcode-input').value=barcode;document.getElementById('photo-ref').value=barcode}
+    const brandField=document.getElementById('photo-brand');
+    if(!brandField.value.trim()){
+      const brandCandidate=lines.find(x=>/marque|fabric|distrib|charcuterie/i.test(x));
+      if(brandCandidate)brandField.value=brandCandidate.slice(0,100);
+    }
+    setBarcodeStatus('Lecture terminée. Le texte peut contenir des erreurs : vérifie le nom, le code-barres et toutes les informations avant l’enregistrement.'+(barcode?' Code-barres repéré : '+barcode+'.':''));
+  }catch(err){
+    setBarcodeStatus('La lecture automatique n’a pas pu démarrer. Vérifie ta connexion Internet et réessaie, ou saisis le nom manuellement.');
+  }finally{
+    btn.disabled=false;btn.textContent='📝 Lire le texte de la photo';
+  }
+});
+
+
+// V0.8 : facture -> lignes préparées -> validation manuelle -> entrée en stock.
+let invoiceDraft=[];
+let invoiceHistory=load('invoice_history_'+activeEstablishmentId,[]);
+function saveInvoiceHistory(){localStorage.setItem('km_invoice_history_'+activeEstablishmentId,JSON.stringify(invoiceHistory))}
+function renderInvoiceHistory(){
+ const host=document.getElementById('invoice-history-list');if(!host)return;
+ host.innerHTML=invoiceHistory.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Fournisseur</th><th>Facture</th><th>Lignes</th><th>Valeur estimée</th></tr></thead><tbody>${invoiceHistory.slice().reverse().map(h=>`<tr><td>${safe(h.date)}</td><td>${safe(h.supplier||'—')}</td><td>${safe(h.number||'—')}</td><td>${h.lines}</td><td>${money(h.total)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Aucune livraison validée.</div>';
+}
+function normalizeProductName(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
+function findExistingProduct(name){
+ const n=normalizeProductName(name);
+ let found=stocks.find(p=>normalizeProductName(p.name)===n);
+ if(found)return found;
+ const tokens=n.split(' ').filter(t=>t.length>3);
+ if(!tokens.length)return null;
+ found=stocks.find(p=>{const pn=normalizeProductName(p.name);return tokens.filter(t=>pn.includes(t)).length>=Math.max(1,Math.ceil(tokens.length*0.7))});
+ return found||null;
+}
+function normalizeSupplierCode(v){return String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
+function detectSupplierCode(line){
+ const text=String(line||'');
+ // Priorité aux références explicitement précédées d'un libellé.
+ const labelled=text.match(/(?:r[eé]f(?:[eé]rence)?|code(?:\s+(?:article|produit))?|article\s*n[°o]?)\s*[:#.-]?\s*([A-Z0-9][A-Z0-9._/-]{2,19})/i);
+ if(labelled && /[A-Z]/i.test(labelled[1]) && /\d/.test(labelled[1])) return labelled[1].replace(/[._/ ]+/g,'-').toUpperCase();
+ // Références mixtes courantes : ABC-123, REF123, 123-ABC. Évite les prix et quantités isolés.
+ const mixed=[...text.matchAll(/\b[A-Z]{1,6}[-_/ ]?\d{2,10}[A-Z0-9]*\b|\b\d{3,8}[-_/][A-Z]{1,5}\b/gi)];
+ if(mixed.length) return mixed[0][0].replace(/[._/ ]+/g,'-').toUpperCase();
+ // Références numériques longues seulement si un libellé de référence est visible.
+ const numeric=text.match(/(?:r[eé]f(?:érence)?|code|article)\s*[:#.-]?\s*(\d{5,14})/i);
+ return numeric?numeric[1]:'';
+}
+function invoiceCodeStatus(x){
+ if(!x.code)return 'Code non détecté';
+ const match=stocks.find(p=>p.code && normalizeSupplierCode(p.code)===normalizeSupplierCode(x.code));
+ if(!match)return 'Code absent du stock';
+ const sameName=normalizeProductName(match.name)===normalizeProductName(x.name) || findExistingProduct(x.name)?.id===match.id;
+ return sameName?'Code reconnu : '+match.name:'⚠ Code reconnu, nom différent : '+match.name;
+}
+let invoiceRowCounter=0;
+const invoiceFile=document.getElementById('invoice-file');
+const invoiceStatus=document.getElementById('invoice-status');
+function invoiceMsg(t){invoiceStatus.textContent=t}
+function renderInvoiceLines(){
+ renderInvoiceHistory();
+ const host=document.getElementById('invoice-lines');
+ if(!invoiceDraft.length){host.innerHTML='<div class="empty">Aucune ligne préparée pour l’instant.</div>';document.getElementById('invoice-validate-btn').disabled=true;return}
+ host.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Produit / ligne détectée</th><th>Code fournisseur</th><th>Vérification du code</th><th>Nb colis</th><th>Contenu par colis</th><th>Unité stock</th><th>Prix €/colis</th><th>Seuil stock</th><th>Action</th></tr></thead><tbody>${invoiceDraft.map((x,i)=>`<tr>
+ <td><input aria-label="Nom du produit ${i+1}" value="${safe(x.name)}" data-invoice-field="name" data-index="${i}" required></td>
+ <td><input aria-label="Code fournisseur ${i+1}" value="${safe(x.code||'')}" placeholder="Code article" data-invoice-field="code" data-index="${i}"></td>
+ <td><small>${safe(invoiceCodeStatus(x))}</small></td>
+ <td><input aria-label="Nombre de colis ${i+1}" type="number" min="0.001" step="0.001" value="${x.qty}" data-invoice-field="qty" data-index="${i}"></td>
+ <td><input aria-label="Contenu d'un colis ${i+1}" type="number" min="0.001" step="0.001" placeholder="Ex. 10" value="${x.packSize??''}" data-invoice-field="packSize" data-index="${i}"></td>
+ <td><select aria-label="Unité stock ${i+1}" data-invoice-field="unit" data-index="${i}">${['kg','g','L','cl','pièce(s)','paquet(s)'].map(u=>`<option ${u===x.unit?'selected':''}>${u}</option>`).join('')}</select></td>
+ <td><input aria-label="Prix par colis ${i+1}" type="number" min="0" step="0.01" value="${x.price}" data-invoice-field="price" data-index="${i}"></td>
+ <td><input aria-label="Seuil ${i+1}" type="number" min="0" step="0.01" value="${x.min}" data-invoice-field="min" data-index="${i}"></td>
+ <td><button type="button" class="btn" data-invoice-remove="${i}">Retirer</button></td>
+ </tr>`).join('')}</tbody></table></div>`;
+ host.querySelectorAll('[data-invoice-field]').forEach(el=>el.addEventListener('change',()=>{
+  const x=invoiceDraft[Number(el.dataset.index)],f=el.dataset.invoiceField;
+  x[f]=f==='name'||f==='unit'||f==='code'?el.value:(el.value===''?'':Number(el.value));
+ }));
+ host.querySelectorAll('[data-invoice-remove]').forEach(el=>el.addEventListener('click',()=>{invoiceDraft.splice(Number(el.dataset.invoiceRemove),1);renderInvoiceLines()}));
+ document.getElementById('invoice-validate-btn').disabled=false;
+}
+invoiceFile?.addEventListener('change',()=>{
+ const f=invoiceFile.files[0];document.getElementById('invoice-file-preview').textContent=f?'Fichier sélectionné : '+f.name:'Aucun fichier sélectionné.';
+});
+document.getElementById('invoice-add-line-btn')?.addEventListener('click',()=>{
+ invoiceDraft.push({name:'',code:'',qty:1,packSize:'',unit:document.getElementById('invoice-default-unit').value,price:Number(document.getElementById('invoice-default-price').value)||0,min:1});
+ renderInvoiceLines();
+});
+document.getElementById('read-invoice-btn')?.addEventListener('click',async()=>{
+ const file=invoiceFile.files[0];
+ if(!file){invoiceMsg('Choisis d’abord une photo ou une image de facture.');return}
+ const btn=document.getElementById('read-invoice-btn');btn.disabled=true;btn.textContent='Lecture en cours…';
+ invoiceMsg('Chargement de la lecture de texte gratuite. Cela peut prendre un moment…');
+ try{
+  if(file.type==='application/pdf'){invoiceMsg('Cette version ne lit pas encore directement les PDF. Prends une capture d’écran ou une photo de la facture.');return}
+  if(!window.Tesseract){
+   await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';script.onload=resolve;script.onerror=()=>reject(new Error('Tesseract indisponible'));document.head.appendChild(script)});
+  }
+  invoiceMsg('Lecture du texte de la facture…');
+  const result=await window.Tesseract.recognize(file,'fra+eng');
+  const lines=(result.data.text||'').split(/\r?\n/).map(x=>x.trim()).filter(x=>x.length>2);
+  const parsed=[];
+  for(const line of lines){
+   const cleaned=line.replace(/[|_]+/g,' ').replace(/\s+/g,' ').trim();
+   // Exclure les coordonnées et les lignes administratives les plus fréquentes.
+   if(/grossiste|fournisseur|factur[eé] à|adresse|rue des|rue du|avenue|boulevard|\b59\d{3}\b|lille|cambrai|siret|iban|client|facture n|bon de livraison|date|[ée]ch[ée]ance|sous.total|\btotal\b|\btva\b|montant|conditions|r[èe]glement|t[ée]l[ée]phone/i.test(cleaned))continue;
+   // Garder en priorité les références de lignes produits ou les noms alimentaires plausibles.
+   const looksLikeProduct=/\b(LEG|FRI|SAU|LAI|HUI)[- ]?\d{0,4}\b|\b[A-Z]{1,6}[-_/ ]?\d{2,10}[A-Z0-9]*\b|\b\d{5,14}\b|pommes? de terre|fricadell|sauciss|maroilles|huile de friture|poulet|bœuf|boeuf|fromage|frites|cr[eè]me|beurre|farine|œuf|oeuf|lait|carton|bidon|surgel/i.test(cleaned);
+   const nums=[...cleaned.matchAll(/(\d+(?:[.,]\d{1,3})?)/g)].map(m=>Number(m[1].replace(',','.')));
+   if(cleaned.length<5 || !/[a-zA-ZÀ-ÿ]{3}/.test(cleaned) || (!looksLikeProduct && nums.length<3))continue;
+   let name=cleaned
+    .replace(/\b(?:LEG|FRI|SAU|LAI|HUI)[- ]?\d{0,4}\b/i,'')
+    .replace(/\b[A-Z]{1,6}[-_/ ]?\d{2,10}[A-Z0-9]*\b/gi,' ')
+    .replace(/\b\d{5,14}\b/g,' ')
+    .replace(/\b\d+(?:[.,]\d{1,3})?\s*(?:€|EUR|kg|g|l|cl|colis|carton|pi[eè]ce[s]?|sac|bidon)?\b/gi,' ')
+    .replace(/\s+/g,' ').trim();
+   if(name.length<3)name=cleaned;
+   // OCR cannot reliably infer columns. Never invent quantities or prices: leave them blank for confirmation.
+   const qtyMatch=cleaned.match(/\b(\d+(?:[.,]\d{1,3})?)\s*(?:sac|carton|bidon|pi[eè]ce|colis)/i);
+   const priceMatches=[...cleaned.matchAll(/(\d+[,.]\d{2})\s*€/g)].map(m=>Number(m[1].replace(',','.')));
+   const sizeMatch=cleaned.match(/\b(\d+(?:[.,]\d{1,3})?)\s*(kg|g|l|cl)\b/i);
+   let detectedSize=sizeMatch?Number(sizeMatch[1].replace(',','.')):'';
+   let detectedUnit=sizeMatch?sizeMatch[2].toLowerCase():document.getElementById('invoice-default-unit').value;
+   if(detectedUnit==='g' && detectedSize!=='' ){detectedSize=detectedSize/1000;detectedUnit='kg'}
+   if(detectedUnit==='cl' && detectedSize!=='' ){detectedSize=detectedSize/100;detectedUnit='L'}
+   const refMatch=detectSupplierCode(cleaned);
+   parsed.push({
+    name:name.slice(0,100),
+    code:refMatch||'',
+    qty:qtyMatch?Number(qtyMatch[1].replace(',','.')):'',
+    packSize:detectedSize,
+    unit:detectedUnit,
+    price:priceMatches.length?priceMatches[0]:'',
+    min:1,
+    sourceLine:cleaned
+   });
+  }
+  invoiceDraft=parsed.slice(0,40);
+  renderInvoiceLines();
+  invoiceMsg(invoiceDraft.length?'Lecture terminée : '+invoiceDraft.length+' lignes candidates. Les codes ont été repérés quand possible ; vérifie les codes, noms, quantités et prix avant validation. Rien n’a été ajouté au stock.':'Aucune ligne produit assez fiable détectée. Ajoute les lignes manuellement et vérifie la facture.');
+ }catch(err){invoiceMsg('Lecture impossible. Vérifie Internet et réessaie, ou ajoute les lignes manuellement.')}
+ finally{btn.disabled=false;btn.textContent='📝 Lire la facture et préparer la livraison'}
+});
+document.getElementById('invoice-validate-btn')?.addEventListener('click',()=>{
+ if(!invoiceDraft.length){invoiceMsg('Aucune ligne à valider.');return}
+ const invalid=invoiceDraft.some(x=>!String(x.name||'').trim()||x.qty===''||!Number.isFinite(Number(x.qty))||Number(x.qty)<=0||x.packSize===''||!Number.isFinite(Number(x.packSize))||Number(x.packSize)<=0||x.price===''||!Number.isFinite(Number(x.price))||Number(x.price)<0);
+ if(invalid){alert('Vérifie le nom, le nombre de colis, le contenu par colis et le prix de chaque colis.');return}
+ const supplier=document.getElementById('invoice-supplier').value.trim();
+ const invoiceNo=document.getElementById('invoice-number').value.trim();
+ if(!confirm('Confirmer '+invoiceDraft.length+' ligne(s) de livraison et mettre à jour le stock ? Vérifie que les quantités et unités correspondent à la facture.'))return;
+ let added=0,created=0;
+ for(const x of invoiceDraft){
+  const name=String(x.name).trim();
+  const existing=(x.code?stocks.find(p=>String(p.code||'').toLowerCase()===String(x.code).toLowerCase()):null)||findExistingProduct(name);
+  if(existing && existing.unit===x.unit){
+   const stockQty=Number(x.qty)*Number(x.packSize);const unitPrice=Number(x.price)/Number(x.packSize);const oldQty=Number(existing.qty)||0;existing.qty=oldQty+stockQty;
+   if(Number(x.price)>0)existing.price=unitPrice;if(x.code&&!existing.code)existing.code=x.code;
+   addMovement('Livraison validée',existing.name,stockQty,x.unit,[supplier,invoiceNo].filter(Boolean).join(' · ')||'Facture importée');
+   added++;
+  }else{
+   const stockQty=Number(x.qty)*Number(x.packSize);const unitPrice=Number(x.price)/Number(x.packSize);
+   stocks.push({id:Date.now()+Math.random(),name,code:x.code||'',category:'Autre',qty:stockQty,unit:x.unit,price:unitPrice,min:Number(x.min)||0,ref:'',brand:supplier,format:Number(x.packSize)+' '+x.unit+' par colis'});
+   addMovement('Création via livraison',name,stockQty,x.unit,[supplier,invoiceNo].filter(Boolean).join(' · ')||'Facture importée');
+   created++;
+  }
+ }
+ const totalValue=invoiceDraft.reduce((sum,x)=>sum+(Number(x.qty)||0)*(Number(x.price)||0),0);
+ invoiceHistory.push({id:Date.now(),date:new Date().toLocaleString('fr-FR'),supplier,number:invoiceNo,lines:invoiceDraft.length,total:totalValue});
+ saveInvoiceHistory();
+ invoiceDraft=[];renderInvoiceLines();save();
+ invoiceMsg('Livraison enregistrée : '+added+' produit(s) mis à jour, '+created+' nouvelle(s) référence(s).');
+ alert('Livraison validée. Pense à vérifier les produits et les prix dans le stock.');
+});
+
+setRole('admin');
+render();
+renderEstablishments();
+addIngredientRow();
+updateRecipeEstimate();
+</script>
+</body>
+</html>
